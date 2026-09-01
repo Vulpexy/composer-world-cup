@@ -105,8 +105,18 @@ body{background-image:radial-gradient(circle at 50% -8%,#fffaf0 0,transparent 38
 .result-bracket{position:relative;grid-template-columns:repeat(5,minmax(180px,1fr));gap:42px}.bracket-round{position:relative;z-index:2}.bracket-connections{position:absolute;inset:0;z-index:1;overflow:visible;pointer-events:none}.bracket-connections path{fill:none;stroke:#9b6f31;stroke-width:1.6;vector-effect:non-scaling-stroke;opacity:.72}.bracket-round article{box-shadow:0 2px 7px rgba(62,39,22,.05)}
 @media(max-width:760px){.knockout-tools{display:block}.knockout-tools>button{font-size:10px;height:30px}.knockout-tools .round-meter{margin-top:7px}.result-bracket{gap:34px}.transition-actions button{min-width:170px}}
 
-/* Mobile group cards: compact 2×2 overview with an optional works side. */
-.desktop-card-content{display:contents}.mobile-card-content{display:none}
+/* Shared composer card: the same summary/works interaction in every tournament stage. */
+.desktop-card-content{display:none}.mobile-card-content{display:block;height:100%;perspective:900px}
+.composer-card{height:430px;cursor:pointer;position:relative;transition:border-color .2s,box-shadow .2s,transform .2s,background .2s}
+.composer-card:focus-visible{outline:2px solid #9b6671;outline-offset:2px}.composer-card.is-selected{background:#fff9ee;border-color:#702338;box-shadow:0 0 0 2px #702338,0 10px 25px rgba(86,25,40,.18)}
+.mobile-card-front,.mobile-card-back{height:100%;background:#fffdf8;transition:transform .35s ease,opacity .25s ease;backface-visibility:hidden}
+.mobile-card-front{display:grid;grid-template-rows:176px minmax(0,1fr)}.mobile-portrait{position:relative;overflow:hidden;background:#d8cdbf}.mobile-portrait .portrait{object-fit:cover!important;object-position:center 20%!important}
+.mobile-selected-mark{position:absolute;right:10px;top:10px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#702338;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}.mobile-selected-mark svg{width:17px}
+.mobile-summary{padding:13px 14px 12px;display:flex;flex-direction:column;min-width:0}.mobile-period{align-self:flex-start;margin:0 0 5px;padding:3px 7px;border:1px solid #ccb379;border-radius:999px;color:#703143;background:#f8ead1;font-size:9px;line-height:1.2;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-summary h2,.mobile-card-back h2{font-family:var(--font-serif-custom);font-size:20px;line-height:1.16;margin:0;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.mobile-summary h2.long-name,.mobile-card-back h2.long-name{font-size:16px}.mobile-summary .original-name{font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobile-region{font-size:9px;color:#8b673f;margin:6px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobile-bio{font-family:var(--font-serif-custom);font-size:11px;line-height:1.5;color:#554940;margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.flip-card-button{margin-top:auto;width:100%;min-height:34px;border:1px solid #a98250;border-radius:5px;background:#fff9ed;color:#672437;display:flex;align-items:center;justify-content:center;gap:5px;font-size:10px;font-weight:700;cursor:pointer}.flip-card-button svg{width:13px;height:13px}
+.mobile-card-back{display:none;padding:15px 14px 12px;grid-template-rows:auto minmax(0,1fr) auto;transform:rotateY(180deg);opacity:0}.composer-card.is-flipped .mobile-card-front{display:none;transform:rotateY(-180deg);opacity:0}.composer-card.is-flipped .mobile-card-back{display:grid;transform:rotateY(0);opacity:1}.mobile-card-back header{min-width:0;margin-bottom:6px}.mobile-card-back header small{display:block;font-family:Georgia,serif;font-size:10px;color:#8d7c6f}.back-button{margin-top:7px}
+.repechage-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.repechage-grid .composer-card{height:400px}.knockout-match-grid .composer-card{height:460px}.knockout-match-grid .mobile-card-front{grid-template-rows:210px minmax(0,1fr)}
 @media(max-width:760px){
   .group-view{padding:0 8px 24px}
   .group-view .match-intro{padding:13px 7px 10px}
@@ -116,7 +126,7 @@ body{background-image:radial-gradient(circle at 50% -8%,#fffaf0 0,transparent 38
   .four-grid .composer-card{min-height:0;height:326px;cursor:pointer;border-radius:8px;position:relative;transition:border-color .2s,box-shadow .2s,transform .2s,background .2s}
   .four-grid .composer-card:focus-visible{outline:2px solid #9b6671;outline-offset:2px}
   .four-grid .composer-card.is-selected{transform:none;background:#fff9ee;border-color:#702338;box-shadow:0 0 0 2px #702338,0 8px 18px rgba(86,25,40,.18)}
-  .desktop-card-content{display:none}.mobile-card-content{display:block;height:100%;perspective:900px}
+  .mobile-card-content{display:block;height:100%;perspective:900px}
   .mobile-card-front,.mobile-card-back{height:100%;background:#fffdf8;transition:transform .35s ease,opacity .25s ease;backface-visibility:hidden}
   .mobile-card-front{display:grid;grid-template-rows:92px minmax(0,1fr)}
   .mobile-portrait{position:relative;overflow:hidden;background:#d8cdbf}
@@ -145,6 +155,8 @@ body{background-image:radial-gradient(circle at 50% -8%,#fffaf0 0,transparent 38
   .back-button{min-height:27px;margin-top:5px}
   .group-confirm{margin-top:10px}
   .knockout-portrait .period-badge{top:auto;bottom:7px;left:7px;max-width:calc(100% - 14px);font-size:8px;padding:3px 6px}
+  .repechage-view{padding-left:8px;padding-right:8px}.repechage-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.repechage-grid .composer-card{height:326px}
+  .knockout-match-grid .composer-card{height:326px}.knockout-match-grid .mobile-card-front{grid-template-rows:92px minmax(0,1fr)}
 }
 @media(max-width:370px){
   .four-grid .composer-card{height:312px}.mobile-card-front{grid-template-rows:82px minmax(0,1fr)}

@@ -8,7 +8,7 @@ import { createTournament, eliminatedComposers, GROUP_PITCHES, makeRound, restor
 
 const STORAGE_KEY = 'composer-world-cup-tournament-v2';
 const PORTRAIT_CACHE_KEY = 'composer-world-cup-portraits-v1';
-const AUDIO_CACHE_KEY = 'composer-world-cup-audio-sources-v1';
+const AUDIO_CACHE_KEY = 'composer-world-cup-audio-sources-v2';
 const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 const byId = new Map(composers.map((composer) => [composer.id, composer]));
 const groupTitle=(index:number)=>`${GROUP_PITCHES[index]} 音级组`;
@@ -77,7 +77,9 @@ async function resolveTrackSource(composer:Composer,work:Work):Promise<TrackSour
       const aliasMatches=composerAliases.filter((alias)=>haystack.includes(alias)||haystack.includes(foldGermanAudio(alias))).length;
       const composerMatched=aliasMatches>0;
       const classical=/classical|opera/i.test(track.primaryGenreName||'')||composerMatched;
-      return {track,matched,composerMatched,classical,score:aliasMatches*10+(classical?3:0)+matched.length*4};
+      const arrangementPenalty=(haystack.match(/guitar|ukulele|cover|remix|karaoke|tribute|arrangement|transcription/g)||[]).length;
+      const originalBonus=/piano|violin|cello|orchestra|quartet|choir|opera/.test(haystack)?2:0;
+      return {track,matched,composerMatched,classical,score:aliasMatches*10+(classical?3:0)+matched.length*4+originalBonus-arrangementPenalty*18};
     }).filter((item)=>item.composerMatched&&item.classical&&item.matched.length>=Math.max(1,Math.ceil(required.length*.45))).sort((left,right)=>right.score-left.score);
     match=ranked[0]?.track;if(match)break;
   }

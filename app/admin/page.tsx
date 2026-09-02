@@ -117,7 +117,7 @@ export default function AdminPage() {
           </span>
           <div>
             <strong>大师对位 · MusiCup</strong>
-            <small>古典作曲家淘汰赛 · 数据管理</small>
+            <small>古典作曲家世界杯 · 数据管理</small>
           </div>
         </a>
         {authorized && (

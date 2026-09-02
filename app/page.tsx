@@ -1208,7 +1208,7 @@ function downloadResultImage(state: TournamentState) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#8c7e70';
   ctx.font = '13px Microsoft YaHei, sans-serif';
-  ctx.fillText('由“大师对位 · MusiCup｜古典作曲家淘汰赛”生成', 950, 1212);
+  ctx.fillText('由“大师对位 · MusiCup｜古典作曲家世界杯”生成', 950, 1212);
   canvas.toBlob((blob) => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
@@ -1939,7 +1939,13 @@ export default function Home() {
     <main className="site-shell">
       <header className="topbar">
         <a className="brand" href="#top">
-          <img src="./musicup-logo-web.png" alt="大师对位 MusiCup｜古典作曲家淘汰赛" />
+          <img className="brand-note" src="./musicup-note-icon.png" alt="" />
+          <span className="brand-wordmark" aria-label="MusiCup 大师对位">
+            <strong>MusiCup</strong>
+            <small className="brand-cn" aria-hidden="true">
+              <span>大</span><span>师</span><span>对</span><span>位</span>
+            </small>
+          </span>
         </a>
         <div className="stage-progress">
           <span>{stageText}</span>
@@ -1955,6 +1961,7 @@ export default function Home() {
         ) : (
           <span />
         )}
+        <div className="brand-event-title">古典作曲家世界杯</div>
       </header>
       <div id="top">
         {state.phase === 'roster' && (

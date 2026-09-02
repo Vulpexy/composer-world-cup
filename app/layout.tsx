@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: '大师对位 · MusiCup｜古典作曲家淘汰赛',
+  title: '大师对位 · MusiCup｜古典作曲家世界杯',
   description: '试听、了解并选出你更想继续聆听的古典音乐作曲家。',
   openGraph: {
     title: '大师对位 · MusiCup',

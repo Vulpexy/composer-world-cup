@@ -1131,7 +1131,7 @@ function downloadResultImage(state: TournamentState) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#d7b66d';
   ctx.font = '700 22px Microsoft YaHei, sans-serif';
-  ctx.fillText('COMPOSER WORLD CUP · FINAL RESULT', 950, 48);
+  ctx.fillText('大师对位 · MusiCup · FINAL RESULT', 950, 48);
   ctx.fillStyle = '#fff8eb';
   ctx.font = '700 48px Microsoft YaHei, sans-serif';
   ctx.fillText(`${champion.nameZh} · 冠军`, 950, 108);
@@ -1208,13 +1208,13 @@ function downloadResultImage(state: TournamentState) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#8c7e70';
   ctx.font = '13px Microsoft YaHei, sans-serif';
-  ctx.fillText('由“古典音乐作曲家世界杯”生成', 950, 1212);
+  ctx.fillText('由“大师对位 · MusiCup｜古典作曲家淘汰赛”生成', 950, 1212);
   canvas.toBlob((blob) => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `作曲家世界杯-${champion.nameZh}-冠军.png`;
+    link.download = `大师对位-MusiCup-${champion.nameZh}-冠军.png`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -1541,7 +1541,7 @@ function FinalResultView({
         <div className="champion-image">
           <ComposerPortrait composer={champion} />
         </div>
-        <p className="kicker">COMPOSER WORLD CUP · CHAMPION</p>
+        <p className="kicker">大师对位 · MusiCup · CHAMPION</p>
         <h1>{champion.nameZh}</h1>
         <p className="champion-original">{champion.nameOriginal}</p>
         <p>{champion.bio}</p>
@@ -1939,13 +1939,7 @@ export default function Home() {
     <main className="site-shell">
       <header className="topbar">
         <a className="brand" href="#top">
-          <span className="brand-mark">
-            <Music2 />
-          </span>
-          <span>
-            <strong>作曲家世界杯</strong>
-            <small>COMPOSER WORLD CUP</small>
-          </span>
+          <img src="./musicup-logo.png" alt="大师对位 MusiCup｜古典作曲家淘汰赛" />
         </a>
         <div className="stage-progress">
           <span>{stageText}</span>

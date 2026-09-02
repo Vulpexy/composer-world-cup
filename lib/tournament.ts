@@ -9,7 +9,7 @@ export type KnockoutRound = { entrants:string[]; matches:KnockoutMatch[] };
 export type KnockoutState = { rounds:KnockoutRound[]; currentRound:number; currentMatch:number };
 
 export type TournamentState = {
-  version: 4;
+  version: 5;
   phase: TournamentPhase;
   groups: string[][];
   activeGroup: number;
@@ -17,6 +17,9 @@ export type TournamentState = {
   repechagePicks: string[];
   knockout?: KnockoutState;
   champion?: string;
+  statisticsSubmissionId?: string;
+  namedResultSaved?: boolean;
+  savedDisplayName?: string;
 };
 
 export function drawGroups(selectedIds:string[]=DEFAULT_COMPOSER_IDS): string[][] {
@@ -30,7 +33,7 @@ export function drawGroups(selectedIds:string[]=DEFAULT_COMPOSER_IDS): string[][
 
 export function createTournament(selectedIds:string[]=DEFAULT_COMPOSER_IDS,phase:TournamentPhase='roster'): TournamentState {
   const validIds=new Set(composers.map((composer)=>composer.id));const roster=[...new Set(selectedIds)].filter((id)=>validIds.has(id));const ids=roster.length===48?roster:DEFAULT_COMPOSER_IDS;
-  return { version: 4, phase, groups: drawGroups(ids), activeGroup: 0, groupPicks: [], repechagePicks: [] };
+  return { version: 5, phase, groups: drawGroups(ids), activeGroup: 0, groupPicks: [], repechagePicks: [] };
 }
 
 function validBase(state:{groups?:unknown;groupPicks?:unknown;repechagePicks?:unknown}) {
@@ -46,8 +49,8 @@ export function restoreTournament(value: unknown): TournamentState | null {
   if (!value || typeof value !== 'object') return null;
   const state = value as Record<string,unknown>;
   if (!validBase(state)) return null;
-  if (state.version === 2 || state.version === 3) return { ...(state as unknown as Omit<TournamentState,'version'>), version:4 };
-  if (state.version !== 4 || !['roster','draw','group-selection','repechage','finished','knockout','round-transition','result'].includes(String(state.phase))) return null;
+  if (state.version === 2 || state.version === 3 || state.version === 4) return { ...(state as unknown as Omit<TournamentState,'version'>), version:5 };
+  if (state.version !== 5 || !['roster','draw','group-selection','repechage','finished','knockout','round-transition','result'].includes(String(state.phase))) return null;
   return state as unknown as TournamentState;
 }
 

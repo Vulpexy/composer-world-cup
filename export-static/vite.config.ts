@@ -9,6 +9,7 @@ const exportDir = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   root: exportDir,
   base: "./",
+  publicDir: path.resolve(exportDir, "../public"),
   plugins: [react()],
   css: {
     postcss: {
@@ -31,3 +32,4 @@ export default defineConfig({
     },
   },
 });
+

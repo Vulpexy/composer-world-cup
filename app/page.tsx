@@ -1939,7 +1939,7 @@ export default function Home() {
     <main className="site-shell">
       <header className="topbar">
         <a className="brand" href="#top">
-          <img src="./musicup-logo.png" alt="大师对位 MusiCup｜古典作曲家淘汰赛" />
+          <img src="./musicup-logo-web.png" alt="大师对位 MusiCup｜古典作曲家淘汰赛" />
         </a>
         <div className="stage-progress">
           <span>{stageText}</span>

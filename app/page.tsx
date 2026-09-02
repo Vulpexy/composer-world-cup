@@ -1939,7 +1939,11 @@ export default function Home() {
     <main className="site-shell">
       <header className="topbar">
         <a className="brand" href="#top">
-          <img className="brand-note" src="./musicup-note-icon.png" alt="" />
+          <img
+            className="brand-note"
+            src="https://vulpexy.github.io/composer-world-cup/musicup-note-icon.png"
+            alt=""
+          />
           <span className="brand-wordmark" aria-label="MusiCup 大师对位">
             <strong>MusiCup</strong>
             <small className="brand-cn" aria-hidden="true">

@@ -20,6 +20,8 @@ export type TournamentState = {
   statisticsSubmissionId?: string;
   namedResultSaved?: boolean;
   savedDisplayName?: string;
+  playerMessageSaved?: boolean;
+  savedPlayerMessage?: string;
 };
 
 export function drawGroups(selectedIds:string[]=DEFAULT_COMPOSER_IDS): string[][] {

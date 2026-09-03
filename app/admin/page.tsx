@@ -23,12 +23,14 @@ type AdminRow = {
   display_name: string | null;
   named_consent: number;
   bracket: unknown;
+  player_message: string | null;
   created_at: string;
   updated_at: string;
 };
 type AdminData = {
   total: number;
   named: number;
+  messages: number;
   shown: number;
   rows: AdminRow[];
 };
@@ -49,13 +51,15 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [namedOnly, setNamedOnly] = useState(false);
-  const request = async (nextQuery = query, nextNamed = namedOnly) => {
+  const [messagesOnly, setMessagesOnly] = useState(false);
+  const request = async (nextQuery = query, nextNamed = namedOnly, nextMessages = messagesOnly) => {
     setLoading(true);
     setError('');
     try {
       const params = new URLSearchParams();
       if (nextQuery.trim()) params.set('q', nextQuery.trim());
       if (nextNamed) params.set('named', '1');
+      if (nextMessages) params.set('messages', '1');
       const response = await fetch(`${endpoint()}?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -82,6 +86,7 @@ export default function AdminPage() {
       '亚军',
       '另外两位四强',
       '是否记名',
+      '玩家留言',
       '匿名编号',
     ];
     const lines = rows.map((row) =>
@@ -92,6 +97,7 @@ export default function AdminPage() {
         byId.get(row.runner_up_id)?.nameZh || row.runner_up_id,
         row.semifinalistIds.map((id) => byId.get(id)?.nameZh || id).join(' / '),
         row.named_consent ? '是' : '否',
+        row.player_message || '',
         row.submission_id,
       ]
         .map(csvCell)
@@ -214,6 +220,10 @@ export default function AdminPage() {
               <span>当前显示</span>
               <strong>{data?.shown || 0}</strong>
             </article>
+            <article>
+              <span>玩家留言</span>
+              <strong>{data?.messages || 0}</strong>
+            </article>
           </div>
           <div className="admin-filters">
             <label>
@@ -221,7 +231,7 @@ export default function AdminPage() {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="按昵称搜索"
+                placeholder="按昵称或留言内容搜索"
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') request();
                 }}
@@ -233,10 +243,21 @@ export default function AdminPage() {
                 checked={namedOnly}
                 onChange={(event) => {
                   setNamedOnly(event.target.checked);
-                  request(query, event.target.checked);
+                  request(query, event.target.checked, messagesOnly);
                 }}
               />
               只看自愿记名
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={messagesOnly}
+                onChange={(event) => {
+                  setMessagesOnly(event.target.checked);
+                  request(query, namedOnly, event.target.checked);
+                }}
+              />
+              只看有留言
             </label>
             <Button
               variant="outline"
@@ -261,6 +282,7 @@ export default function AdminPage() {
                   <th>亚军</th>
                   <th>另外两位四强</th>
                   <th>记录</th>
+                  <th>玩家留言</th>
                 </tr>
               </thead>
               <tbody>
@@ -272,6 +294,7 @@ export default function AdminPage() {
                         <span className="anonymous">匿名</span>
                       )}
                     </td>
+                    <td className="admin-message-cell">{row.player_message || <span className="anonymous">无留言</span>}</td>
                     <td>
                       <b>
                         {byId.get(row.champion_id)?.nameZh || row.champion_id}
@@ -299,7 +322,7 @@ export default function AdminPage() {
                 ))}
                 {!rows.length && (
                   <tr>
-                    <td colSpan={6} className="admin-empty">
+                    <td colSpan={7} className="admin-empty">
                       暂无符合条件的数据
                     </td>
                   </tr>

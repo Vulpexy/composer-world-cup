@@ -21,6 +21,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { OpeningCover } from '@/components/opening-cover';
 import {
   composers,
   DEFAULT_COMPOSER_IDS,
@@ -1273,6 +1274,8 @@ function ResultStatistics({
   const [name, setName] = useState(state.savedDisplayName || '');
   const [consent, setConsent] = useState(false);
   const [message, setMessage] = useState('');
+  const [playerMessage, setPlayerMessage] = useState(state.savedPlayerMessage || '');
+  const [playerMessageStatus, setPlayerMessageStatus] = useState('');
   const submitted = useRef(false);
   const placements = useMemo(() => {
     const rounds = state.knockout!.rounds;
@@ -1382,6 +1385,26 @@ function ResultStatistics({
       setMessage('具名记录已撤回，匿名名次统计仍保留。');
     } catch {
       setMessage('撤回失败，请检查网络后重试。');
+    }
+  };
+  const savePlayerMessage = async () => {
+    const text = playerMessage.trim();
+    if (!text) {
+      setPlayerMessageStatus('请先写下想说的话。');
+      return;
+    }
+    setPlayerMessageStatus('正在送出…');
+    try {
+      const response = await fetch(statisticsEndpoint(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload({ playerMessage: text })),
+      });
+      if (!response.ok) throw new Error();
+      onStateChange({ ...state, playerMessageSaved: true, savedPlayerMessage: text });
+      setPlayerMessageStatus('留言已经送达，谢谢你的建议。');
+    } catch {
+      setPlayerMessageStatus('留言暂时未能送出，请检查网络后重试。');
     }
   };
   const championCount =
@@ -1513,6 +1536,18 @@ function ResultStatistics({
           </p>
         </details>
       </section>
+      <section className="player-message-box">
+        <div className="named-copy">
+          <Music2 />
+          <div>
+            <h3>留下一句话</h3>
+            <p>你的冠军是谁？还希望加入哪些作曲家、曲目或玩法？留言只在管理员后台显示，不会自动公开。</p>
+          </div>
+        </div>
+        <textarea value={playerMessage} maxLength={300} onChange={(event) => setPlayerMessage(event.target.value)} placeholder="写下你的感受或建议（最多300字，请勿填写电话、邮箱等个人信息）" />
+        <div className="player-message-actions"><small>{playerMessage.length}/300 · 可以匿名留言</small><Button className="primary-action" onClick={savePlayerMessage}>{state.playerMessageSaved ? '更新留言' : '送出留言'}</Button></div>
+        {playerMessageStatus && <p className="named-message" role="status">{playerMessageStatus}</p>}
+      </section>
     </section>
   );
 }
@@ -1596,6 +1631,7 @@ function FinalResultView({
 
 export default function Home() {
   const [state, setState] = useState<TournamentState | null>(null);
+  const [showOpening, setShowOpening] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [audio, setAudio] = useState<AudioState>({
     active: null,
@@ -1612,6 +1648,7 @@ export default function Home() {
         JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'),
       );
       setState(saved || createTournament());
+      setShowOpening(!saved || saved.phase === 'roster');
       const cached = JSON.parse(localStorage.getItem(AUDIO_CACHE_KEY) || '{}');
       setAudio((value) => ({ ...value, sources: cached }));
     } catch {
@@ -1915,6 +1952,7 @@ export default function Home() {
     stopAudio();
     setSelected([]);
     setState(createTournament());
+    setShowOpening(true);
   };
   if (!state)
     return (
@@ -1923,6 +1961,8 @@ export default function Home() {
         <span>正在准备48人名单…</span>
       </main>
     );
+  if (showOpening)
+    return <OpeningCover onStart={() => setShowOpening(false)} />;
   const stageText =
     state.phase === 'roster'
       ? '选择48位参赛者'

@@ -64,4 +64,8 @@ for (let offset=0; offset<tasks.length; offset+=8) {
   process.stdout.write(`\rResolved ${Math.min(offset+8,tasks.length)}/${tasks.length}`);
 }
 await writeFile(new URL('../public/audio-catalog.json',import.meta.url),JSON.stringify(catalog,null,2));
+await writeFile(
+  new URL('../lib/audio-catalog.ts',import.meta.url),
+  `export const AUDIO_CATALOG = ${JSON.stringify(catalog,null,2)} as const;\n`,
+);
 console.log(`\nSaved ${Object.keys(catalog).length}/${tasks.length} sources`);

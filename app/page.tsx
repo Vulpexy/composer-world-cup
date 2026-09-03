@@ -27,6 +27,7 @@ import {
   type Composer,
   type Work,
 } from '@/lib/composers';
+import { AUDIO_CATALOG } from '@/lib/audio-catalog';
 import {
   createTournament,
   eliminatedComposers,
@@ -210,21 +211,12 @@ function searchItunes(term: string, country = 'US'): Promise<ItunesTrack[]> {
   });
 }
 
-let bundledAudioCatalog: Promise<Record<string, TrackSource>> | null = null;
-function getBundledAudioCatalog() {
-  if (!bundledAudioCatalog)
-    bundledAudioCatalog = fetch(new URL('audio-catalog.json', document.baseURI))
-      .then((response) => (response.ok ? response.json() : {}))
-      .catch(() => ({}));
-  return bundledAudioCatalog;
-}
-
 async function resolveTrackSource(
   composer: Composer,
   work: Work,
 ): Promise<TrackSource> {
   const workIndex = composer.works.indexOf(work);
-  const bundled = (await getBundledAudioCatalog())[`${composer.id}:${workIndex}`];
+  const bundled = AUDIO_CATALOG[`${composer.id}:${workIndex}` as keyof typeof AUDIO_CATALOG];
   if (bundled) return bundled;
   if (work.audioFilename)
     return {

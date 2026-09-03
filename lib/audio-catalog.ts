@@ -1,4 +1,4 @@
-{
+export const AUDIO_CATALOG = {
   "ren-josquin:0": {
     "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/98/1e/38/981e3867-8513-b7d7-b07b-4552d7d4e3fe/mzaf_2075721114958636702.plus.aac.p.m4a",
     "provider": "iTunes",
@@ -641,4 +641,4 @@
     "detail": "Violin Concerto in D Minor, Op. 47: Adagio di molto · Jascha Heifetz, Walter Hendl & Chicago Symphony Orchestra",
     "trackUrl": "https://music.apple.com/us/album/violin-concerto-in-d-minor-op-47-adagio-di-molto/458436919?i=458436985&uo=4"
   }
-}
+} as const;

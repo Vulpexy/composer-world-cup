@@ -1,0 +1,350 @@
+{
+  "ren-josquin:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/98/1e/38/981e3867-8513-b7d7-b07b-4552d7d4e3fe/mzaf_2075721114958636702.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Ave Maria, Virgo Serena · Stile Antico",
+    "trackUrl": "https://music.apple.com/de/album/ave-maria-virgo-serena/1537654822?i=1537654830&uo=4"
+  },
+  "ren-josquin:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/5b/25/cb/5b25cbbb-8c76-54af-f775-d3268b097731/mzaf_12580990112687052226.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Missa Pange lingua: I. Kyrie · Kammerchor Josquin des Préz & Ludwig Böhme",
+    "trackUrl": "https://music.apple.com/gb/album/missa-pange-lingua-i-kyrie/1588752325?i=1588752637&uo=4"
+  },
+  "ren-josquin:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/84/85/00/848500af-0fca-3722-be5f-6c42a136c940/mzaf_11555110552685995774.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Miserere mei, Deus, IJ. 50: I. Miserere mei, Deus · Cappella Amsterdam & Daniel Reuss",
+    "trackUrl": "https://music.apple.com/us/album/miserere-mei-deus-ij-50-i-miserere-mei-deus/1438800148?i=1438800221&uo=4"
+  },
+  "ren-palestrina:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/1d/ab/8d/1dab8d37-aed4-a542-d481-3f198681efd9/mzaf_9374078364226784264.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Missa Papae Marcelli (Messe) (Auszug): Kyrie · Opus Vocale & Volker Hedtfeld",
+    "trackUrl": "https://music.apple.com/us/album/missa-papae-marcelli-messe-auszug-kyrie/1653210423?i=1653210429&uo=4"
+  },
+  "ren-palestrina:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/20/88/6c/20886ca6-2100-840b-7c26-4b23ef9c9919/mzaf_6024942306142301870.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Sicut Cervus (feat. Giovanni Pierluigi da Palestrina) · The Schola Cantorum of St. John XXIII Parish",
+    "trackUrl": "https://music.apple.com/de/album/sicut-cervus-feat-giovanni-pierluigi-da-palestrina/1183119009?i=1183119577&uo=4"
+  },
+  "ren-palestrina:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/Music/9a/37/57/mzm.uywawtem.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Stabat Mater · Coro Accademia Filarmonica Romana & Pablo Volino",
+    "trackUrl": "https://music.apple.com/us/album/stabat-mater/314969108?i=314969247&uo=4"
+  },
+  "ren-byrd:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/Music69/v4/c3/9f/dd/c39fdd5b-5c81-3d58-3334-e57111754d21/mzaf_3785761319069345662.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Mass for Four Voices: Agnus Dei · Christ Church Catherdral Choir & Stephen Darlington",
+    "trackUrl": "https://music.apple.com/us/album/mass-for-four-voices-agnus-dei/1057192096?i=1057192744&uo=4"
+  },
+  "ren-byrd:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/d4/e2/1a/d4e21a84-6c92-8b82-fde3-46bf453dedb8/mzaf_821321240703643072.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Ave verum corpus (Remastered 2015) · The Choir of King's College, Cambridge & Sir David Willcocks",
+    "trackUrl": "https://music.apple.com/us/album/ave-verum-corpus-remastered-2015/1452268705?i=1452269391&uo=4"
+  },
+  "ren-byrd:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/10/f7/6a/10f76a09-1d32-ab6a-8477-f9f4f6f9d6ae/mzaf_713806563224746296.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "The Great Service: III. Benedictus · Peter Phillips & The Tallis Scholars",
+    "trackUrl": "https://music.apple.com/us/album/the-great-service-iii-benedictus/263774075?i=263779149&uo=4"
+  },
+  "bar-monteverdi:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/37/1b/5a/371b5ad0-a7a0-c856-4cf4-b0d76b5cba27/mzaf_17055838671609282869.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "La favola d'Orfeo, opera - Toccata · ARTEK & Gwendolyn Toth",
+    "trackUrl": "https://music.apple.com/de/album/la-favola-dorfeo-opera-toccata/49353043?i=49351493&uo=4"
+  },
+  "bar-monteverdi:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/Music4/v4/cd/6e/60/cd6e608a-f072-30eb-33e4-5a8b5024794e/mzaf_4519091324306028378.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "L'Incoronazione di Poppea, SV 308, Act III: \"Ascendi, o mia diletta\" (Nerone, Poppea, Tribuni, Consoli, Amore, Venere) · Sergio Vartolo, Orchestra Pigna, Patricia Biccire, Liliana Rugiero, Angela Bucci & William Mattenzzi",
+    "trackUrl": "https://music.apple.com/us/album/lincoronazione-di-poppea-sv-308-act-iii-ascendi-o-mia/820970098?i=820970506&uo=4"
+  },
+  "bar-monteverdi:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/7d/5f/a8/7d5fa84d-470e-9991-54af-3cc145849c10/mzaf_11734027630355409935.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Vespro della Beata Vergine - Performing Edition by John Eliot Gardiner: 3. Psalmus 109: Dixit Dominus · Jill Gomez, Felicity Palmer, Robert Tear, Philip Langridge, John Shirley-Quirk, Michael Rippon, Monteverdi Choir, Philip Jones Brass Ensemble, Monteverdi Orchestra & John Eliot Gardiner",
+    "trackUrl": "https://music.apple.com/de/album/vespro-della-beata-vergine-performing-edition-by-john/1452522760?i=1452523175&uo=4"
+  },
+  "bar-schutz:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview71/v4/06/48/a0/0648a069-54c8-4fc7-b1d7-db6d337fc4a1/mzaf_102186186708171193.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Musikalische Exequien, SWV 279-281: Konzert (in Form einer deutschen Begräbnis-Missa) · The Sixteen & Harry Christophers",
+    "trackUrl": "https://music.apple.com/us/album/musikalische-exequien-swv-279-281-konzert-in-form-einer/131929932?i=131931025&uo=4"
+  },
+  "bar-schutz:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/5a/c6/44/5ac64400-2f55-7997-0115-8b78adc337ab/mzaf_13114993690744697322.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Psalmen Davids: VIII. Danket dem Herren, denn er ist freundlich, SWV 45 · Cantus Cölln, Sören Lupold, Imke David, Mieneke van der Velden, Joachim Klier, Anne Rohrig, Carsten Lohff, Konrad Junghänel & Christoph Heidemann",
+    "trackUrl": "https://music.apple.com/us/album/psalmen-davids-viii-danket-dem-herren-denn-er-ist-freundlich/525982722?i=525982890&uo=4"
+  },
+  "bar-schutz:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/ef/fd/0e/effd0e8e-772f-33b4-cc9d-9cd2651a3c0b/mzaf_1731807363588003795.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Weihnachtshistorie, SWV 435: Introduction. Die Geburt unsers Herren Jesu Christi · Bavarian State Orchestra, Münchner MotettenChor & Hans Rudolf Zöbeley",
+    "trackUrl": "https://music.apple.com/us/album/weihnachtshistorie-swv-435-introduction-die-geburt/1206962531?i=1206962683&uo=4"
+  },
+  "bar-purcell:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/96/54/32/96543298-e73f-3a35-b085-e22579ec6520/mzaf_7177312192119633135.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Dido and Aeneas, Act 3: \"Thy Hand, Belinda.When I Am Laid in Earth\" · English Chamber Orchestra, Raymond Leppard & Jessye Norman",
+    "trackUrl": "https://music.apple.com/us/album/dido-and-aeneas-act-3-thy-hand-belinda-when-i-am-laid-in-earth/1452238911?i=1452240385&uo=4"
+  },
+  "bar-purcell:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/5a/2b/18/5a2b18eb-e459-fe88-b4f3-9b9872c47eef/mzaf_10281066424949111513.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "The Fairy Queen, Act 4: \"Now the Night Is Chased Away\" (Attendant, Chorus) · Arnold Schoenberg Choir, Concentus Musicus Wien, Nikolaus Harnoncourt & Sylvia McNair",
+    "trackUrl": "https://music.apple.com/us/album/the-fairy-queen-act-4-now-the-night-is-chased/458004663?i=458004701&uo=4"
+  },
+  "bar-vivaldi:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/22/be/5b/22be5bb8-11cc-643d-bba5-09464d2184cc/mzaf_15484026209036018422.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Seasons (Spring): I. Allegro · Jonathan Carney & Royal Philharmonic Orchestra",
+    "trackUrl": "https://music.apple.com/us/album/seasons-spring-i-allegro/201439672?i=201439676&uo=4"
+  },
+  "bar-vivaldi:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/d5/45/ce/d545ce54-565e-1d15-d680-5bc61f6dac87/mzaf_7405548077682059253.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Gloria in D Major, RV 589: II. Et in terra pax hominibus · Alastair Ross, Deborah Norman, The Choir of King's College, Cambridge, Sir Stephen Cleobury, Academy of Ancient Music, Sarah Fox & Michael Chance",
+    "trackUrl": "https://music.apple.com/us/album/gloria-in-d-major-rv-589-ii-et-in-terra-pax-hominibus/695478701?i=695478868&uo=4"
+  },
+  "bar-vivaldi:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/7d/58/6a/7d586a6a-fb7f-cc78-61ad-968db167d06b/mzaf_2441307664641458693.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "L'estro armonico, Op. 3: Concerto No. 2 for Two Violins and Cello in G Minor, RV 578: I. Adagio e spiccato · Maurizio Naddeo, Fabio Biondi, Europa Galante & Enrico Casazza",
+    "trackUrl": "https://music.apple.com/us/album/lestro-armonico-op-3-concerto-no-2-for-two-violins/693338846?i=693340100&uo=4"
+  },
+  "bar-handel:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b0/25/78/b025785f-e410-5f2d-f797-88d91a8ff692/mzaf_6552654218024740935.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Messiah: Hallelujah · Mark Stephenson & London Musici Chamber Choir",
+    "trackUrl": "https://music.apple.com/us/album/messiah-hallelujah/404183004?i=404183096&uo=4"
+  },
+  "bar-handel:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview71/v4/b5/fc/44/b5fc4408-0498-aee6-4f69-8f7cf89d1141/mzaf_6821729217828849929.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Water Music - Suite No. 2 in D Major, HWV 349: Bourrée · RCA Victor Symphony Orchestra & Leopold Stokowski",
+    "trackUrl": "https://music.apple.com/us/album/water-music-suite-no-2-in-d-major-hwv-349-bourr%C3%A9e/628505501?i=628505875&uo=4"
+  },
+  "bar-handel:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/05/09/6e05093e-6c30-abc7-ec37-5f15dccf3f9a/mzaf_10620109992767979723.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Music for the Royal Fireworks, HWV 351: IV. La Réjouissance · Dmitry Sinkovsky & B'Rock Orchestra",
+    "trackUrl": "https://music.apple.com/us/album/music-for-the-royal-fireworks-hwv-351-iv-la-r%C3%A9jouissance/1690437553?i=1690441326&uo=4"
+  },
+  "bar-bach:0": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bach%20-%20Brandenburg%20Concerto%20No.%201%20-%201.%20Allegro.ogg",
+    "provider": "Wikimedia Commons",
+    "detail": "Busch Chamber Players · CC BY 3.0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Bach_-_Brandenburg_Concerto_No._1_-_1._Allegro.ogg"
+  },
+  "bar-bach:1": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Johann%20Sebastian%20Bach%20-%20The%20Well-tempered%20Clavier%20-%20Book%201%20-%2002Epre%20cmaj.ogg",
+    "provider": "Wikimedia Commons",
+    "detail": "Martha Goldstein · CC BY-SA 2.0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Johann_Sebastian_Bach_-_The_Well-tempered_Clavier_-_Book_1_-_02Epre_cmaj.ogg"
+  },
+  "bar-bach:2": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/JOHN%20MICHEL%20CELLO-J%20S%20BACH%20CELLO%20SUITE%201%20in%20G%20Prelude.ogg",
+    "provider": "Wikimedia Commons",
+    "detail": "John Michel · CC BY-SA 3.0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg"
+  },
+  "bar-telemann:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/c2/c6/ee/c2c6eeb9-ba56-9aa5-4b67-856e4b37d78f/mzaf_17944741156529692890.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Tafelmusik - Banquet Music in 3 Parts / Production 1: II. Quatuor in G Major: II. Vivace - Moderato - Vivace D. c. · Musica Antiqua Köln & Reinhard Goebel",
+    "trackUrl": "https://music.apple.com/gb/album/tafelmusik-banquet-music-in-3-parts-production-1-ii/1452636841?i=1452637747&uo=4"
+  },
+  "bar-telemann:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/60/eb/a5/60eba58a-ae20-1e99-f462-653c7e55657a/mzaf_5193127583586582485.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Concerto à 4 in G Major, TWV 43:G1 \"Paris Quartet No. 1\": I. Grave - Allegro · London Handel Players",
+    "trackUrl": "https://music.apple.com/de/album/concerto-%C3%A0-4-in-g-major-twv-43-g1-paris-quartet-no/1790818869?i=1790818872&uo=4"
+  },
+  "bar-telemann:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/0a/66/13/0a66133c-7587-df47-813b-b1f4a744f9d1/mzaf_14660111095180748654.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Brockes-Passion: I. Teil: 16. Arie (Jesus) \"Mein Vater!\" / ... / 18. Arie (Jesus) \"Ist's Möglich, Daß Dein Zorn Sich Stille\" · Johannes Weisser, René Jacobs & Akademie für Alte Musik Berlin",
+    "trackUrl": "https://music.apple.com/de/album/brockes-passion-i-teil-16-arie-jesus-mein-vater-18/306554497?i=306554537&uo=4"
+  },
+  "cla-haydn:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/1d/43/19/1d43198e-dfa9-eaf8-0e9c-3b196d684919/mzaf_15121864794666624029.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Symphony No. 94 In G Major, 'Surprise': I. Adagio Cantabile - Vivace Assai · Royal Philharmonic Orchestra & Sir Thomas Beecham",
+    "trackUrl": "https://music.apple.com/us/album/symphony-no-94-in-g-major-surprise-i-adagio-cantabile/296822898?i=296822922&uo=4"
+  },
+  "cla-haydn:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/58/72/cd/5872cd48-a420-05c2-e157-ca25e1dc050a/mzaf_18323770470871765700.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "The Creation - PART I: Tenor Air & Chorus \"Now Vanish\" · Amor Artis Orchestra, Fairfield County Chorale & Johannes Somary",
+    "trackUrl": "https://music.apple.com/gb/album/the-creation-part-i-tenor-air-chorus-now-vanish/48601217?i=48601067&uo=4"
+  },
+  "cla-haydn:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/d9/df/f3/d9dff30a-5c6b-0c86-a98b-066b7b232c7e/mzaf_9112313225506788979.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "String Quartet No. 60 in C Major, Op. 76/3, Hob III:77 \"Emperor\": II. Poco adagio. Cantabile. Variazioni I-IV · Zemlinsky Quartet",
+    "trackUrl": "https://music.apple.com/us/album/string-quartet-no-60-in-c-major-op-76-3-hob-iii-77/1647196290?i=1647196299&uo=4"
+  },
+  "cla-mozart:0": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Wolfgang%20Amadeus%20Mozart%20-%20Don%20Giovanni%20-%20Overt%C3%BCre.ogg",
+    "provider": "Wikimedia Commons",
+    "detail": "Fulda Symphonic Orchestra · EFF Open Audio License",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Wolfgang_Amadeus_Mozart_-_Don_Giovanni_-_Overt%C3%BCre.ogg"
+  },
+  "cla-mozart:1": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mozart%20-%20Magic%20Flute%20Overture.ogg",
+    "provider": "Wikimedia Commons",
+    "detail": "Musopen Symphony Orchestra · CC0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Mozart_-_Magic_Flute_Overture.ogg"
+  },
+  "cla-mozart:2": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mozart%20Symphony%2040%20G%20minor%20-%201%20Molto%20allegro.oga",
+    "provider": "Wikimedia Commons",
+    "detail": "Tsumugi Orchestra · Takashi Inoue · CC BY 3.0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Mozart_Symphony_40_G_minor_-_1_Molto_allegro.oga"
+  },
+  "cla-beethoven:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/6a/c6/dc/6ac6dc77-09b9-ecb8-7ac9-643392f1609f/mzaf_17779265626597287284.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Symphony No. 5 in C Minor, Op. 67: I. Allegro con brio · London Symphony Orchestra & Josef Krips",
+    "trackUrl": "https://music.apple.com/us/album/symphony-no-5-in-c-minor-op-67-i-allegro-con-brio/1466992917?i=1466992925&uo=4"
+  },
+  "cla-beethoven:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview124/v4/79/64/1a/79641af5-1b4e-0a59-f307-e415aebaeecd/mzaf_3250520823138221656.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Symphony No. 9 in D Minor, Op. 125: IV. Finale. Allegro assai · Stanislava Součková, Vlasta Linhartová, Beno Blachut, Eduard Haken, Prague Philharmonic Choir & Hermann Abendroth",
+    "trackUrl": "https://music.apple.com/de/album/symphony-no-9-in-d-minor-op-125-iv-finale-allegro-assai/1530336901?i=1530337116&uo=4"
+  },
+  "cla-beethoven:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fc/95/1e/fc951e4f-c1e5-87d1-5ae2-c328a253f3ae/mzaf_14507055254791331717.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Moonlight Sonata (Beethoven) · Healing Energy",
+    "trackUrl": "https://music.apple.com/us/album/moonlight-sonata-beethoven/1743143108?i=1743143269&uo=4"
+  },
+  "cla-boccherini:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/d4/94/3b/d4943b2b-2421-9047-734a-d1e2154abc0d/mzaf_1526464443048374027.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Minuet - from String Quintet in E Major (Boccherini) · Philharmonia Virtuosi",
+    "trackUrl": "https://music.apple.com/us/album/minuet-from-string-quintet-in-e-major-boccherini/19064959?i=19064939&uo=4"
+  },
+  "cla-boccherini:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b7/ce/c4/b7cec4f3-b04c-6253-58a9-b94a54dcbd0f/mzaf_10521109149242844914.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Cello Concerto in B-Flat Major: I. Allegro moderato - Cadenza · Daniel Barenboim, Jacqueline du Pré & English Chamber Orchestra",
+    "trackUrl": "https://music.apple.com/de/album/cello-concerto-in-b-flat-major-i-allegro-moderato-cadenza/693627427?i=693627733&uo=4"
+  },
+  "cla-boccherini:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/b2/40/f8/b240f8d6-34a9-4f47-31de-95dea7c5c368/mzaf_6758096329772126825.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Quintette à cordes No. 6 en Ut Majeur, G. 324, Op. 30  \"La Musica Notturna delle Strade di Madrid\": V. Los Manolos (Passa calle). Allegro vivo · Ophélie Gaillard & Pulcinella Orchestra",
+    "trackUrl": "https://music.apple.com/us/album/quintette-%C3%A0-cordes-no-6-en-ut-majeur-g-324-op-30-la/1449266210?i=1449266227&uo=4"
+  },
+  "cla-salieri:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/cf/3b/ec/cf3bec22-ac80-b7eb-f8da-25bdc14e035b/mzaf_4894665974024409069.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Tarare, Prologue: Scène 1. Ouverture « C'est assez troubler l'univers » (La Nature et les Vents déchaînés) · Les Talens Lyriques, Christophe Rousset, Judith Van Wanroij & Les Chantres du Centre de Musique baroque de Versailles",
+    "trackUrl": "https://music.apple.com/us/album/tarare-prologue-sc%C3%A8ne-1-ouverture-cest-assez-troubler/1464671198?i=1464671201&uo=4"
+  },
+  "cla-salieri:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/34/0c/24/340c2497-59ed-2924-8b17-08e928c64761/mzaf_14710832968265914079.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Axur, Re d'Ormus, Act 4: Son queste le speranze · Eva Mei, Orchestra Filarmonica di Russe & René Clemencic",
+    "trackUrl": "https://music.apple.com/us/album/axur-re-dormus-act-4-son-queste-le-speranze/1793564373?i=1793565603&uo=4"
+  },
+  "cla-salieri:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a4/a3/03/a4a303fe-671c-2829-037e-35ba8756d366/mzaf_1383779937145643910.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Requiem in C Minor: Introitus - Kyrie · Luis Rodrigues, Coro Gulbenkian, Lawrence Foster, Orquestra Gulbenkian & Adam Zdunikowski",
+    "trackUrl": "https://music.apple.com/de/album/requiem-in-c-minor-introitus-kyrie/1741147876?i=1741148097&uo=4"
+  },
+  "rom-schubert:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/60/da/6e/60da6eb6-c381-dc39-fa00-54d27833c5f1/mzaf_17683610602739943708.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Symphony No. 8 in B Minor, D. 759, \"Unfinished\": I. Allegro moderato, Part II · Gerard Schwarz & New York Chamber Orchestra",
+    "trackUrl": "https://music.apple.com/us/album/symphony-no-8-in-b-minor-d-759-unfinished-i-allegro/274821348?i=274821491&uo=4"
+  },
+  "rom-mendelssohn:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/20/64/01/2064018f-b979-9123-47c9-668b7df5ebe4/mzaf_10737991374289072358.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Overture to \"A Midsummer Night's Dream\", Op. 21: Allegro di molto · London Symphony Orchestra & John Eliot Gardiner",
+    "trackUrl": "https://music.apple.com/us/album/overture-to-a-midsummer-nights-dream-op-21-allegro-di-molto/1394250419?i=1394251591&uo=4"
+  },
+  "rom-mendelssohn:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/c6/d8/fb/c6d8fbe6-a843-b292-1155-b3aff5a70c2a/mzaf_6526507684723275874.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Symphony No. 4 in A Major, Op. 90 \"Italian\": III. Menuetto. Con moto moderato · London Symphony Orchestra & John Eliot Gardiner",
+    "trackUrl": "https://music.apple.com/us/album/symphony-no-4-in-a-major-op-90-italian-iii-menuetto/1394243911?i=1394244761&uo=4"
+  },
+  "rom-chopin:0": {
+    "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nocturne%20Op.%209%20no.%202%20in%20E%20flat%20major.mp3",
+    "provider": "Wikimedia Commons",
+    "detail": "Musopen · 钢琴演奏 · CC0",
+    "trackUrl": "https://commons.wikimedia.org/wiki/File:Nocturne_Op._9_no._2_in_E_flat_major.mp3"
+  },
+  "rom-rschumann:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/b3/9d/36/b39d36c6-270b-4afd-e6f5-7002b78a5798/mzaf_5810577717164395167.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Carnaval, Op. 9: No. 5, Eusebius · David Deveau",
+    "trackUrl": "https://music.apple.com/de/album/carnaval-op-9-no-5-eusebius/1406990605?i=1406990612&uo=4"
+  },
+  "rom-rschumann:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/32/e2/af/32e2af6f-b293-93f8-30db-eb3feb9098e7/mzaf_3219184089091252161.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Piano Concerto in A Minor, Op. 54: II. Intermezzo (Andantino grazioso) · Maurizio Pollini, Claudio Abbado & Berlin Philharmonic",
+    "trackUrl": "https://music.apple.com/gb/album/piano-concerto-in-a-minor-op-54-ii-intermezzo/1452162716?i=1452162727&uo=4"
+  },
+  "rom-cschumann:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b9/38/a4/b938a4ee-ae7f-673a-b8d2-63841f18ed14/mzaf_12643685589041971593.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Piano Concerto in A Minor, Op. 7: II. Romanze: Andante non troppo con grazia · Alma Mahler Sinfonietta, Francesco Nicolosi & Stefania Rinaldi",
+    "trackUrl": "https://music.apple.com/us/album/piano-concerto-in-a-minor-op-7-ii-romanze-andante/60626614?i=60626504&uo=4"
+  },
+  "rom-cschumann:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/19/98/47/19984723-89bd-8654-4814-53cca6a45421/mzaf_8536333156887895235.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Piano Trio in G Minor, Op. 17: III. Andante · Andrea Noferini, Francesco Nicolosi & Rodolfo Bonucci",
+    "trackUrl": "https://music.apple.com/us/album/piano-trio-in-g-minor-op-17-iii-andante/60626614?i=60626566&uo=4"
+  },
+  "rom-cschumann:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f8/75/56/f87556b1-b2b1-d5bc-3113-a06a2a2fc8ff/mzaf_17626165982248075518.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Three Romances, Op. 22 (Arr. for Viola and Piano by Tabea Zimmermann): I. Andante molto · Tabea Zimmermann & Javier Perianes",
+    "trackUrl": "https://music.apple.com/gb/album/three-romances-op-22-arr-for-viola-and-piano-by-tabea/1858355967?i=1858356449&uo=4"
+  },
+  "rom-liszt:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/50/9e/ab/509eab82-823b-45cb-9a3d-d2e5cd315c1d/mzaf_829940771294278589.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Hungarian Rhapsody No 2 · Arthur Fiedler & Boston Pops Orchestra",
+    "trackUrl": "https://music.apple.com/us/album/hungarian-rhapsody-no-2/378447122?i=378447239&uo=4"
+  },
+  "pool-rameau:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/16/95/66/16956664-47e5-81f6-e62f-af73d243f21b/mzaf_4810163300648457830.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Hippolyte Et Aricie : Overture · Les Arts Florissants, William Christie & Jean-Philippe Rameau",
+    "trackUrl": "https://music.apple.com/gb/album/hippolyte-et-aricie-overture/330817473?i=330817986&uo=4"
+  },
+  "pool-rameau:2": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview19/v4/e4/e8/b9/e4e8b98b-3820-e427-3e1f-9232727ad871/mzaf_1119231299782812907.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "La Poule (The Hen) · Mordecai Shehori",
+    "trackUrl": "https://music.apple.com/de/album/la-poule-the-hen/673562645?i=673562735&uo=4"
+  },
+  "pool-cpebach:0": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview123/v4/67/f7/41/67f741ab-ee23-3ad2-fad4-e9366cc5ae2d/mzaf_13205964617199571253.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Prussian Sonatas - Andante · Jovial Classics",
+    "trackUrl": "https://music.apple.com/gb/album/prussian-sonatas-andante/1492778336?i=1492778338&uo=4"
+  },
+  "pool-cpebach:1": {
+    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/45/ef/f8/45eff893-8ad6-fded-9ecf-3aea8ac11272/mzaf_6898128684919219478.plus.aac.p.m4a",
+    "provider": "iTunes",
+    "detail": "Flute Concerto in D minor, Wq. 22, H. 426: I. Allegro · Hartmut Haenchen, Carl Philipp Emanuel Bach Chamber Orchestra & Eckart Haupt",
+    "trackUrl": "https://music.apple.com/de/album/flute-concerto-in-d-minor-wq-22-h-426-i-allegro/401171104?i=401171201&uo=4"
+  }
+}

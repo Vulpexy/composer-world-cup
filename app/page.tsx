@@ -40,7 +40,7 @@ import {
 
 const STORAGE_KEY = 'composer-world-cup-tournament-v2';
 const PORTRAIT_CACHE_KEY = 'composer-world-cup-portraits-v1';
-const AUDIO_CACHE_KEY = 'composer-world-cup-audio-sources-v2';
+const AUDIO_CACHE_KEY = 'composer-world-cup-audio-sources-v3';
 const statisticsEndpoint = () =>
   window.location.hostname === 'vulpexy.github.io'
     ? 'https://composer-world-cup-48.minervaw59.chatgpt.site/api/results'
@@ -210,10 +210,22 @@ function searchItunes(term: string, country = 'US'): Promise<ItunesTrack[]> {
   });
 }
 
+let bundledAudioCatalog: Promise<Record<string, TrackSource>> | null = null;
+function getBundledAudioCatalog() {
+  if (!bundledAudioCatalog)
+    bundledAudioCatalog = fetch(new URL('audio-catalog.json', document.baseURI))
+      .then((response) => (response.ok ? response.json() : {}))
+      .catch(() => ({}));
+  return bundledAudioCatalog;
+}
+
 async function resolveTrackSource(
   composer: Composer,
   work: Work,
 ): Promise<TrackSource> {
+  const workIndex = composer.works.indexOf(work);
+  const bundled = (await getBundledAudioCatalog())[`${composer.id}:${workIndex}`];
+  if (bundled) return bundled;
   if (work.audioFilename)
     return {
       url: `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(work.audioFilename)}`,

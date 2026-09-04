@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Crown,
   Download,
+  Info,
   LoaderCircle,
   Medal,
   Music2,
@@ -22,6 +23,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { OpeningCover } from '@/components/opening-cover';
+import { LanguageSwitch } from '@/components/language-switch';
+import { LegalNotice } from '@/components/legal-notice';
+import { composerBio, composerPeriod, composerRegion, composerYears, useLanguage, type Language } from '@/lib/i18n';
 import {
   composers,
   DEFAULT_COMPOSER_IDS,
@@ -50,7 +54,12 @@ const statisticsEndpoint = () =>
 const SILENT_WAV =
   'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 const byId = new Map(composers.map((composer) => [composer.id, composer]));
-const groupTitle = (index: number) => `${GROUP_PITCHES[index]} 音级组`;
+const groupTitle = (index: number, language: Language = 'zh') =>
+  language === 'zh' ? `${GROUP_PITCHES[index]} 音级组` : `Pitch ${GROUP_PITCHES[index]}`;
+const roundName = (count: number, language: Language) => language === 'zh'
+  ? roundLabel(count)
+  : count === 32 ? 'Round of 32' : count === 16 ? 'Round of 16' : count === 8 ? 'Quarterfinals' : count === 4 ? 'Semifinals' : count === 2 ? 'Final' : 'Champion';
+const composerName = (composer: Composer | undefined, language: Language) => composer ? (language === 'zh' ? composer.nameZh : composer.nameOriginal) : '';
 
 function readCache(key: string): Record<string, string> {
   try {
@@ -61,6 +70,7 @@ function readCache(key: string): Record<string, string> {
 }
 
 function ComposerPortrait({ composer }: { composer: Composer }) {
+  const { language, text } = useLanguage();
   const [source, setSource] = useState(composer.portrait || '');
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -82,7 +92,8 @@ function ComposerPortrait({ composer }: { composer: Composer }) {
       `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=thumbnail&pithumbsize=900&titles=${encodeURIComponent(composer.wikipediaSlug)}&format=json&origin=*`,
     )
       .then((response) => response.json())
-      .then((data) => {
+      .then((payload) => {
+        const data = payload as { query?: { pages?: Record<string, { thumbnail?: { source?: string } }> } };
         const pages = Object.values(data?.query?.pages || {}) as Array<{
           thumbnail?: { source?: string };
         }>;
@@ -105,17 +116,18 @@ function ComposerPortrait({ composer }: { composer: Composer }) {
     return (
       <div className="portrait-fallback">
         <Music2 />
-        <span>{composer.nameZh.slice(0, 2)}</span>
+        <span>{language === 'zh' ? composer.nameZh.slice(0, 2) : composer.nameOriginal.split(/\s+/).map((part) => part[0]).join('').slice(0, 2)}</span>
       </div>
     );
-  return (
+  return (<>
     <img
       src={source}
-      alt={`${composer.nameZh}肖像`}
+      alt={`${composerName(composer, language)} ${text('肖像','portrait')}`}
       className="portrait"
       onError={() => setFailed(true)}
     />
-  );
+    <a className="portrait-source" href={`https://en.wikipedia.org/wiki/${encodeURIComponent(composer.wikipediaSlug)}`} target="_blank" rel="noreferrer" aria-label={text('查看肖像来源与许可','View portrait source and licensing')} title={text('肖像来源与许可','Portrait source and licensing')}><Info /></a>
+  </>);
 }
 
 type TrackSource = {
@@ -141,6 +153,15 @@ type ItunesTrack = {
   primaryGenreName?: string;
   previewUrl?: string;
   trackViewUrl?: string;
+};
+type CommonsPage = {
+  title?: string;
+  canonicalurl?: string;
+  imageinfo?: Array<{
+    url?: string;
+    mime?: string;
+    extmetadata?: Record<string, { value?: string }>;
+  }>;
 };
 
 const AUDIO_STOPWORDS = new Set([
@@ -212,13 +233,57 @@ function searchItunes(term: string, country = 'US'): Promise<ItunesTrack[]> {
   });
 }
 
+const plainMetadata = (value = '') => {
+  const node = document.createElement('div');
+  node.innerHTML = value;
+  return (node.textContent || '').replace(/\s+/g, ' ').trim();
+};
+
+async function searchOpenRecording(composer: Composer, work: Work): Promise<TrackSource | null> {
+  try {
+    const query = `${composer.nameOriginal} ${work.audioQuery} filetype:audio`;
+    const endpoint = new URL('https://commons.wikimedia.org/w/api.php');
+    endpoint.search = new URLSearchParams({
+      action: 'query', generator: 'search', gsrsearch: query, gsrnamespace: '6', gsrlimit: '12',
+      prop: 'info|imageinfo', inprop: 'url', iiprop: 'url|mime|extmetadata', format: 'json', origin: '*',
+    }).toString();
+    const response = await fetch(endpoint);
+    if (!response.ok) return null;
+    const payload = await response.json() as { query?: { pages?: Record<string, CommonsPage> } };
+    const composerWords = audioWords(composer.nameOriginal).filter((word) => word.length > 3);
+    const aliases = composerWords.length > 2 ? composerWords.slice(-2) : composerWords.slice(-1);
+    const workWords = audioWords(work.audioQuery);
+    const candidates = Object.values(payload.query?.pages || {}).map((page) => {
+      const info = page.imageinfo?.[0];
+      const meta = info?.extmetadata || {};
+      const licence = plainMetadata(meta.LicenseShortName?.value || meta.UsageTerms?.value || '');
+      const title = normalizeAudio(page.title || '');
+      const aliasMatches = aliases.filter((word) => title.includes(word)).length;
+      const workMatches = workWords.filter((word) => title.includes(word)).length;
+      const openLicence = /public domain|cc0|cc by(?:-|\s)|creative commons attribution|eff open audio/i.test(licence);
+      return { page, info, meta, licence, aliasMatches, workMatches, openLicence };
+    }).filter((item) => item.info?.url && item.info.mime?.startsWith('audio/') && item.openLicence && item.aliasMatches > 0 && item.workMatches >= Math.max(1, Math.ceil(workWords.length * .45)))
+      .sort((a, b) => (b.aliasMatches * 10 + b.workMatches) - (a.aliasMatches * 10 + a.workMatches));
+    const best = candidates[0];
+    if (!best?.info?.url) return null;
+    const performer = plainMetadata(best.meta.Artist?.value || best.meta.Credit?.value || best.meta.Author?.value || 'Wikimedia contributor');
+    return {
+      url: best.info.url,
+      provider: 'Wikimedia Commons',
+      detail: [performer, best.licence].filter(Boolean).join(' · '),
+      trackUrl: best.page.canonicalurl || `https://commons.wikimedia.org/wiki/${encodeURIComponent((best.page.title || '').replace(/ /g, '_'))}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function resolveTrackSource(
   composer: Composer,
   work: Work,
 ): Promise<TrackSource> {
   const workIndex = composer.works.indexOf(work);
   const bundled = AUDIO_CATALOG[`${composer.id}:${workIndex}` as keyof typeof AUDIO_CATALOG];
-  if (bundled) return bundled;
   if (work.audioFilename)
     return {
       url: `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(work.audioFilename)}`,
@@ -226,6 +291,10 @@ async function resolveTrackSource(
       detail: [work.audioCredit, work.audioLicense].filter(Boolean).join(' · '),
       trackUrl: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(work.audioFilename).replace(/%20/g, '_')}`,
     };
+  if (bundled?.provider === 'Wikimedia Commons') return bundled;
+  const openRecording = await searchOpenRecording(composer, work);
+  if (openRecording) return openRecording;
+  if (bundled) return bundled;
   const query = `${composer.nameOriginal} ${work.audioQuery}`;
   const composerWords = audioWords(composer.nameOriginal).filter(
     (word) => word.length > 3,
@@ -324,14 +393,15 @@ function WorkList({
   onToggle: (composer: Composer, work: Work, index: number) => void;
   compact?: boolean;
 }) {
+  const { language, text } = useLanguage();
   return (
     <section
       className={`works ${compact ? 'compact-works' : ''}`}
-      aria-label={`${composer.nameZh}代表作`}
+      aria-label={`${composerName(composer, language)} ${text('代表作','selected works')}`}
     >
       <div className="section-label">
         <Music2 />
-        代表作 · 30秒试听
+        {text('代表作 · 30秒试听','Selected works · 30-second previews')}
       </div>
       <ul>
         {composer.works.map((work, index) => {
@@ -348,14 +418,10 @@ function WorkList({
                   className="work-title-button"
                   onClick={() => onToggle(composer, work, index)}
                 >
-                  <strong>{work.nameZh}</strong>
-                  <small>{work.nameEn}</small>
+                  <strong>{language === 'zh' ? work.nameZh : work.nameEn}</strong>
+                  <small>{language === 'zh' ? work.nameEn : work.nameZh}</small>
                 </button>
-                {failed && (
-                  <em>
-                    {audio.errorDetail || '暂未匹配到可用试听，可稍后重试'}
-                  </em>
-                )}
+                {failed && <div className="audio-error-row"><em>{audio.errorDetail || text('暂未匹配到可用试听，可稍后重试','No suitable preview was found. Please try again later.')}</em><details className="audio-help"><summary aria-label={text('了解试听失败原因','Why did this preview fail?')}><Info /></summary><div><b>{text('为什么会失败？','Why can this happen?')}</b><p>{text('第三方目录可能因地区授权、网络连接、浏览器播放限制、录音地址更新或曲目无法可靠匹配而不可用。你可以重试，或打开来源页面继续试听。','Third-party catalogues may be unavailable because of territorial rights, connectivity, browser playback rules, a changed media URL, or an uncertain track match. Retry or open the source page when available.')}</p></div></details></div>}
                 {source && (
                   <a
                     className="audio-credit"
@@ -363,7 +429,9 @@ function WorkList({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {source.provider} · {source.detail}
+                    {source.provider === 'iTunes'
+                      ? `${text('Apple Music 试听','Apple Music preview')} · Provided courtesy of iTunes · ${source.detail} · ${text('在 Apple Music 打开 ↗','Open in Apple Music ↗')}`
+                      : `${source.provider} · ${source.detail} · ${text('查看来源与许可 ↗','View source & licence ↗')}`}
                   </a>
                 )}
               </div>
@@ -371,7 +439,7 @@ function WorkList({
                 className="play-button"
                 onClick={() => onToggle(composer, work, index)}
                 disabled={loading}
-                aria-label={`${playing ? '暂停' : '播放'}${work.nameZh}`}
+                aria-label={`${playing ? text('暂停','Pause') : text('播放','Play')} ${language === 'zh' ? work.nameZh : work.nameEn}`}
               >
                 {loading ? (
                   <LoaderCircle className="spin" />
@@ -414,6 +482,7 @@ function ComposerCard({
   onPrepareAudio: (composer: Composer) => void;
   onSelect: () => void;
 }) {
+  const { language, text } = useLanguage();
   const [showWorks, setShowWorks] = useState(false);
   const selectFromCard = (event: React.MouseEvent<HTMLElement>) => {
     if ((event.target as HTMLElement).closest('button,a')) return;
@@ -445,15 +514,15 @@ function ComposerCard({
             )}
           </div>
           <div className="mobile-summary">
-            <p className="mobile-period">{composer.period}</p>
-            <h2 className={composer.nameZh.length > 9 ? 'long-name' : ''}>
-              {composer.nameZh}
+            <p className="mobile-period">{composerPeriod(composer, language)}</p>
+            <h2 className={composerName(composer, language).length > 24 ? 'long-name' : ''}>
+              {composerName(composer, language)}
             </h2>
-            <p className="original-name">{composer.nameOriginal}</p>
+            <p className="original-name">{language === 'zh' ? composer.nameOriginal : composer.nameZh}</p>
             <p className="mobile-region">
-              {composer.years} · {composer.region}
+              {composerYears(composer, language)} · {composerRegion(composer, language)}
             </p>
-            <p className="mobile-bio">{composer.bio}</p>
+            <p className="mobile-bio">{composerBio(composer, language)}</p>
             <button
               className="flip-card-button"
               onClick={() => {
@@ -462,16 +531,16 @@ function ComposerCard({
               }}
             >
               <Music2 />
-              我想听听代表作
+              {text('我想听听代表作','Hear selected works')}
             </button>
           </div>
         </div>
         <div className="mobile-card-back">
           <header>
-            <h2 className={composer.nameZh.length > 9 ? 'long-name' : ''}>
-              {composer.nameZh}
+            <h2 className={composerName(composer, language).length > 24 ? 'long-name' : ''}>
+              {composerName(composer, language)}
             </h2>
-            <small>{composer.nameOriginal}</small>
+            <small>{language === 'zh' ? composer.nameOriginal : composer.nameZh}</small>
           </header>
           <WorkList
             composer={composer}
@@ -484,7 +553,7 @@ function ComposerCard({
             onClick={() => setShowWorks(false)}
           >
             <RotateCcw />
-            返回简介
+            {text('返回简介','Back to profile')}
           </button>
         </div>
       </div>
@@ -493,6 +562,7 @@ function ComposerCard({
 }
 
 function RosterView({ onStart }: { onStart: (ids: string[]) => void }) {
+  const { language, text } = useLanguage();
   const [roster, setRoster] = useState<string[]>(DEFAULT_COMPOSER_IDS);
   const selected = new Set(roster);
   const toggle = (id: string) =>
@@ -507,40 +577,40 @@ function RosterView({ onStart }: { onStart: (ids: string[]) => void }) {
     <section className="roster-view">
       <div className="stage-intro">
         <p className="kicker">SELECT YOUR 48 · 61 COMPOSERS</p>
-        <h1>选择本届世界杯参赛作曲家</h1>
+        <h1>{text('选择本届世界杯参赛作曲家','Choose this World Cup’s composers')}</h1>
         <p>
-          可以直接使用系统默认48人，也可以从61位候选者中自选48人；选定后再进行十二音级分组抽签。
+          {text('可以直接使用系统默认48人，也可以从61位候选者中自选48人；选定后再进行十二音级分组抽签。','Use the default field of 48, or choose your own 48 from 61 candidates before the twelve-pitch group draw.')}
         </p>
       </div>
       <div className="roster-toolbar">
         <div>
           <span>
-            已选择 <b>{roster.length}</b> / 48
+            {text('已选择','Selected')} <b>{roster.length}</b> / 48
           </span>
           <small>
             {roster.length === 48
-              ? '名单已满足抽签人数'
-              : '请先取消一位默认选手，再加入候补选手'}
+              ? text('名单已满足抽签人数','The field is ready for the draw')
+              : text('请先取消一位默认选手，再加入候补选手','Remove a default composer before adding another candidate')}
           </small>
         </div>
         <Button
           variant="outline"
           onClick={() => setRoster(DEFAULT_COMPOSER_IDS)}
         >
-          恢复默认48人
+          {text('恢复默认48人','Restore default 48')}
         </Button>
         <Button
           className="primary-action"
           onClick={() => onStart(DEFAULT_COMPOSER_IDS)}
         >
-          直接使用默认名单
+          {text('直接使用默认名单','Use default field')}
         </Button>
         <Button
           className="primary-action"
           disabled={roster.length !== 48}
           onClick={() => onStart(roster)}
         >
-          使用自选48人
+          {text('使用自选48人','Use my 48')}
           <ChevronRight />
         </Button>
       </div>
@@ -570,25 +640,25 @@ function RosterView({ onStart }: { onStart: (ids: string[]) => void }) {
             </div>
             <div>
               <p>
-                {index >= 48 ? '扩展候选' : '默认选手'} · {composer.period}
+                {index >= 48 ? text('扩展候选','Additional candidate') : text('默认选手','Default player')} · {composerPeriod(composer, language)}
               </p>
-              <h2>{composer.nameZh}</h2>
-              <small>{composer.nameOriginal}</small>
-              <em>{composer.region}</em>
+              <h2>{composerName(composer, language)}</h2>
+              <small>{language === 'zh' ? composer.nameOriginal : composer.nameZh}</small>
+              <em>{composerRegion(composer, language)}</em>
             </div>
           </article>
         ))}
       </div>
       <div className="roster-bottom">
         <span>
-          已选择 <b>{roster.length}</b> / 48
+          {text('已选择','Selected')} <b>{roster.length}</b> / 48
         </span>
         <Button
           className="primary-action"
           disabled={roster.length !== 48}
           onClick={() => onStart(roster)}
         >
-          确认名单并进入抽签
+          {text('确认名单并进入抽签','Confirm field and draw groups')}
           <ChevronRight />
         </Button>
       </div>
@@ -605,22 +675,23 @@ function DrawView({
   onRedraw: () => void;
   onStart: () => void;
 }) {
+  const { language, text } = useLanguage();
   return (
     <section className="draw-view">
       <div className="stage-intro">
         <p className="kicker">GROUP DRAW · 12-TONE EQUAL TEMPERAMENT</p>
-        <h1>十二平均律小组抽签</h1>
+        <h1>{text('十二平均律小组抽签','Twelve-pitch group draw')}</h1>
         <p>
-          48位作曲家随机分为12组，每组对应十二平均律中的一个音级；每组4人同时比较，直接选出2人晋级。
+          {text('48位作曲家随机分为12组，每组对应十二平均律中的一个音级；每组4人同时比较，直接选出2人晋级。','The 48 composers are drawn into 12 pitch-named groups. Compare four at once and choose two to advance.')}
         </p>
       </div>
       <div className="draw-actions">
         <Button variant="outline" onClick={onRedraw}>
           <Shuffle />
-          重新抽签
+          {text('重新抽签','Redraw')}
         </Button>
         <Button className="primary-action" onClick={onStart}>
-          确认分组，开始选择
+          {text('确认分组，开始选择','Confirm groups and begin')}
           <ChevronRight />
         </Button>
       </div>
@@ -629,14 +700,14 @@ function DrawView({
           <article className="group-card" key={GROUP_PITCHES[index]}>
             <header>
               <span>{GROUP_PITCHES[index]}</span>
-              <b>音级组</b>
+              <b>{text('音级组','pitch group')}</b>
             </header>
             <ol>
               {group.map((id, slot) => (
                 <li key={id}>
                   <b>{slot + 1}</b>
-                  <span>{byId.get(id)?.nameZh}</span>
-                  <small>{byId.get(id)?.period}</small>
+                  <span>{composerName(byId.get(id), language)}</span>
+                  <small>{byId.get(id) ? composerPeriod(byId.get(id)!, language) : ''}</small>
                 </li>
               ))}
             </ol>
@@ -664,15 +735,16 @@ function GroupView({
   onToggleAudio: (composer: Composer, work: Work, index: number) => void;
   onPrepareAudio: (composer: Composer) => void;
 }) {
+  const { language, text } = useLanguage();
   const group = state.groups[state.activeGroup].map((id) => byId.get(id)!);
   return (
     <section className="group-view">
       <div className="match-intro">
         <p className="kicker">
-          {groupTitle(state.activeGroup)} · {state.activeGroup + 1} / 12
+          {groupTitle(state.activeGroup, language)} · {state.activeGroup + 1} / 12
         </p>
-        <h1>{GROUP_PITCHES[state.activeGroup]} 音级组 · 选择两位作曲家</h1>
-        <p>四人同时比较，可试听代表作；选满两位后确认晋级。</p>
+        <h1>{groupTitle(state.activeGroup, language)} · {text('选择两位作曲家','Choose two composers')}</h1>
+        <p>{text('四人同时比较，可试听代表作；选满两位后确认晋级。','Compare all four, hear their works, then confirm two qualifiers.')}</p>
       </div>
       <div className="four-grid">
         {group.map((composer) => (
@@ -689,14 +761,14 @@ function GroupView({
       </div>
       <div className="group-confirm">
         <span>
-          已选择 <b>{selected.length}</b> / 2
+          {text('已选择','Selected')} <b>{selected.length}</b> / 2
         </span>
         <Button
           className="primary-action"
           onClick={onConfirm}
           disabled={selected.length !== 2}
         >
-          确认本组晋级
+          {text('确认本组晋级','Confirm qualifiers')}
           <ChevronRight />
         </Button>
       </div>
@@ -748,24 +820,25 @@ function RepechageView({
   onToggleAudio: (composer: Composer, work: Work, index: number) => void;
   onPrepareAudio: (composer: Composer) => void;
 }) {
+  const { text } = useLanguage();
   const eliminated = eliminatedComposers(state).map((id) => byId.get(id)!);
   return (
     <section className="repechage-view">
       <div className="stage-intro">
         <p className="kicker">REPECHAGE · 24 COMPOSERS</p>
-        <h1>从24位淘汰者中复活8位</h1>
-        <p>点击卡片直接选择；翻到背面可试听代表作。</p>
+        <h1>{text('从24位淘汰者中复活8位','Revive 8 of the 24 eliminated composers')}</h1>
+        <p>{text('点击卡片直接选择；翻到背面可试听代表作。','Select a card directly; flip it to hear selected works.')}</p>
       </div>
       <div className="selection-status sticky-selection">
         <span>
-          已选择 <b>{selected.length}</b> / 8
+          {text('已选择','Selected')} <b>{selected.length}</b> / 8
         </span>
         <Button
           className="primary-action"
           disabled={selected.length !== 8}
           onClick={onConfirm}
         >
-          确认8位复活
+          {text('确认8位复活','Confirm 8 revivals')}
           <ChevronRight />
         </Button>
       </div>
@@ -795,6 +868,7 @@ function FinishedView({
   onReset: () => void;
   onStart: () => void;
 }) {
+  const { language, text } = useLanguage();
   const revived = state.repechagePicks;
   return (
     <section className="finished-view">
@@ -802,44 +876,44 @@ function FinishedView({
         <Sparkles />
       </div>
       <p className="kicker">ROUND OF 32 · READY</p>
-      <h1>32强名单已经产生</h1>
+      <h1>{text('32强名单已经产生','The Round of 32 is ready')}</h1>
       <p>
-        24位小组直接晋级者与8位复活者，将随机落位，进入固定签表的单场淘汰赛。
+        {text('24位小组直接晋级者与8位复活者，将随机落位，进入固定签表的单场淘汰赛。','The 24 group qualifiers and 8 revived composers will be drawn into a fixed single-elimination bracket.')}
       </p>
       <div className="knockout-launch">
         <Button className="primary-action" onClick={onStart}>
           <Swords />
-          抽取32强对阵
+          {text('抽取32强对阵','Draw the Round of 32')}
           <ChevronRight />
         </Button>
-        <small>抽签后每轮不再重新排列，胜者沿同一签表路径晋级。</small>
+        <small>{text('抽签后每轮不再重新排列，胜者沿同一签表路径晋级。','After the draw, winners advance along the same bracket path.')}</small>
       </div>
-      <h2>小组直接晋级 · 24人</h2>
+      <h2>{text('小组直接晋级 · 24人','Group qualifiers · 24')}</h2>
       <div className="qualifiers-grid">
         {state.groups.map((_, index) => (
           <article key={index}>
-            <header>{groupTitle(index)}</header>
+            <header>{groupTitle(index, language)}</header>
             {state.groupPicks[index].map((id, rank) => (
               <div key={id}>
                 <span>{rank + 1}</span>
-                <strong>{byId.get(id)?.nameZh}</strong>
+                <strong>{composerName(byId.get(id), language)}</strong>
               </div>
             ))}
           </article>
         ))}
       </div>
-      <h2>复活晋级 · 8人</h2>
+      <h2>{text('复活晋级 · 8人','Revived qualifiers · 8')}</h2>
       <div className="revived-grid">
         {revived.map((id) => (
           <span key={id}>
             <Sparkles />
-            <strong>{byId.get(id)?.nameZh}</strong>
+            <strong>{composerName(byId.get(id), language)}</strong>
           </span>
         ))}
       </div>
       <Button variant="outline" onClick={onReset}>
         <RotateCcw />
-        重新开始一届比赛
+        {text('重新开始一届比赛','Start a new tournament')}
       </Button>
     </section>
   );
@@ -885,6 +959,7 @@ function KnockoutView({
   onChoose: (id: string) => void;
   onBack: () => void;
 }) {
+  const { language, text } = useLanguage();
   const knockout = state.knockout!;
   const round = knockout.rounds[knockout.currentRound];
   const match = round.matches[knockout.currentMatch];
@@ -896,12 +971,12 @@ function KnockoutView({
       <div className="knockout-head">
         <div>
           <p className="kicker">
-            KNOCKOUT · {roundLabel(round.entrants.length)}
+            KNOCKOUT · {roundName(round.entrants.length, language)}
           </p>
-          <h1>{roundLabel(round.entrants.length)}</h1>
+          <h1>{roundName(round.entrants.length, language)}</h1>
           <p>
-            本轮第 {knockout.currentMatch + 1} / {round.matches.length} 场 ·
-            点击卡片晋级，翻到背面可试听。
+            {text('本轮第','Match')} {knockout.currentMatch + 1} / {round.matches.length} ·
+            {text('点击卡片晋级，翻到背面可试听。','Select a card to advance; flip it to hear the music.')}
           </p>
         </div>
         <div className="knockout-tools">
@@ -914,7 +989,7 @@ function KnockoutView({
             }
           >
             <ArrowLeft />
-            回到上一步
+            {text('回到上一步','Undo previous choice')}
           </Button>
           <div className="round-meter">
             <span>
@@ -960,6 +1035,7 @@ function RoundTransitionView({
   onContinue: () => void;
   onBack: () => void;
 }) {
+  const { language, text } = useLanguage();
   const knockout = state.knockout!;
   const round = knockout.rounds[knockout.currentRound];
   const winners = round.matches.map((match) => match.winner!).filter(Boolean);
@@ -971,36 +1047,36 @@ function RoundTransitionView({
       <div className={`transition-seal ${final ? 'champion-seal' : ''}`}>
         {final ? <Crown /> : <ChevronRight />}
       </div>
-      <p className="kicker">{roundLabel(round.entrants.length)} · COMPLETE</p>
+      <p className="kicker">{roundName(round.entrants.length, language)} · COMPLETE</p>
       <h1>
         {final
-          ? `${byId.get(winners[0])?.nameZh} 赢得决赛`
-          : `${winners.length}位作曲家晋级${roundLabel(winners.length)}`}
+          ? `${composerName(byId.get(winners[0]), language)} ${text('赢得决赛','wins the final')}`
+          : language === 'zh' ? `${winners.length}位作曲家晋级${roundName(winners.length, language)}` : `${winners.length} composers advance to the ${roundName(winners.length, language)}`}
       </h1>
       <p>
         {final
-          ? '冠军已经产生，进入最终结果页查看完整晋级路径。'
-          : '本轮签表已经锁定，晋级者将沿原有位置进入下一轮。'}
+          ? text('冠军已经产生，进入最终结果页查看完整晋级路径。','The champion is decided. Continue to see the complete bracket.')
+          : text('本轮签表已经锁定，晋级者将沿原有位置进入下一轮。','This round is locked; winners advance along the existing bracket path.')}
       </p>
       <div className="transition-columns">
         <section>
-          <h2>晋级 · {winners.length}人</h2>
+          <h2>{text('晋级','Advancing')} · {winners.length}</h2>
           <div>
             {winners.map((id) => (
               <span key={id}>
                 <Check />
-                <strong>{byId.get(id)?.nameZh}</strong>
+                <strong>{composerName(byId.get(id), language)}</strong>
               </span>
             ))}
           </div>
         </section>
         <section>
-          <h2>止步本轮 · {eliminated.length}人</h2>
+          <h2>{text('止步本轮','Eliminated')} · {eliminated.length}</h2>
           <div>
             {eliminated.map((id) => (
               <span key={id}>
                 <small>—</small>
-                {byId.get(id)?.nameZh}
+                {composerName(byId.get(id), language)}
               </span>
             ))}
           </div>
@@ -1009,10 +1085,10 @@ function RoundTransitionView({
       <div className="transition-actions">
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft />
-          修改最后一场
+          {text('修改最后一场','Change the last match')}
         </Button>
         <Button className="primary-action transition-next" onClick={onContinue}>
-          {final ? '查看最终结果' : `进入${roundLabel(winners.length)}`}
+          {final ? text('查看最终结果','View final result') : `${text('进入','Continue to ')}${roundName(winners.length, language)}`}
           <ChevronRight />
         </Button>
       </div>
@@ -1021,6 +1097,7 @@ function RoundTransitionView({
 }
 
 function ResultBracket({ state }: { state: TournamentState }) {
+  const { language, text } = useLanguage();
   const rounds = state.knockout!.rounds;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [connections, setConnections] = useState<{
@@ -1089,8 +1166,8 @@ function ResultBracket({ state }: { state: TournamentState }) {
         {rounds.map((round, index) => (
           <section className="bracket-round" key={index}>
             <header>
-              {roundLabel(round.entrants.length)}
-              <small>{round.matches.length}场</small>
+              {roundName(round.entrants.length, language)}
+              <small>{round.matches.length} {text('场','matches')}</small>
             </header>
             <div>
               {round.matches.map((match, matchIndex) => (
@@ -1100,11 +1177,11 @@ function ResultBracket({ state }: { state: TournamentState }) {
                   data-match={matchIndex}
                 >
                   <span className={match.winner === match.a ? 'advanced' : ''}>
-                    {byId.get(match.a)?.nameZh}
+                    {composerName(byId.get(match.a), language)}
                     {match.winner === match.a && <Check />}
                   </span>
                   <span className={match.winner === match.b ? 'advanced' : ''}>
-                    {byId.get(match.b)?.nameZh}
+                    {composerName(byId.get(match.b), language)}
                     {match.winner === match.b && <Check />}
                   </span>
                 </article>
@@ -1117,7 +1194,7 @@ function ResultBracket({ state }: { state: TournamentState }) {
   );
 }
 
-function downloadResultImage(state: TournamentState) {
+function downloadResultImage(state: TournamentState, language: Language) {
   const rounds = state.knockout!.rounds;
   const final = rounds.at(-1)!.matches[0];
   const champion = byId.get(state.champion!)!;
@@ -1139,11 +1216,11 @@ function downloadResultImage(state: TournamentState) {
   ctx.fillText('大师对位 · MusiCup · FINAL RESULT', 950, 48);
   ctx.fillStyle = '#fff8eb';
   ctx.font = '700 48px Microsoft YaHei, sans-serif';
-  ctx.fillText(`${champion.nameZh} · 冠军`, 950, 108);
+  ctx.fillText(`${composerName(champion, language)} · ${language === 'zh' ? '冠军' : 'CHAMPION'}`, 950, 108);
   ctx.fillStyle = '#6d5642';
   ctx.font = '18px Microsoft YaHei, sans-serif';
   ctx.fillText(
-    `亚军 ${runnerUp.nameZh} · 48位作曲家 · 十二平均律小组赛 · 32强淘汰赛`,
+    language === 'zh' ? `亚军 ${runnerUp.nameZh} · 48位作曲家 · 十二平均律小组赛 · 32强淘汰赛` : `Runner-up ${runnerUp.nameOriginal} · 48 composers · 12 pitch groups · Round of 32`,
     950,
     184,
   );
@@ -1186,7 +1263,7 @@ function downloadResultImage(state: TournamentState) {
     ctx.fillStyle = '#fff8eb';
     ctx.font = '700 16px Microsoft YaHei, sans-serif';
     ctx.fillText(
-      roundLabel(round.entrants.length),
+      roundName(round.entrants.length, language),
       x + columnWidth / 2,
       top - 19,
     );
@@ -1203,7 +1280,7 @@ function downloadResultImage(state: TournamentState) {
         ctx.font = `${match.winner === id ? '700' : '400'} 14px Microsoft YaHei, sans-serif`;
         ctx.textAlign = 'left';
         ctx.fillText(
-          `${match.winner === id ? '✓ ' : ''}${byId.get(id)?.nameZh || ''}`,
+          `${match.winner === id ? '✓ ' : ''}${composerName(byId.get(id), language)}`,
           x + 10,
           y + 17 + row * 18,
         );
@@ -1213,13 +1290,13 @@ function downloadResultImage(state: TournamentState) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#8c7e70';
   ctx.font = '13px Microsoft YaHei, sans-serif';
-  ctx.fillText('由“大师对位 · MusiCup｜古典作曲家世界杯”生成', 950, 1212);
+  ctx.fillText(language === 'zh' ? '由“大师对位 · MusiCup｜古典作曲家世界杯”生成' : 'Generated by MusiCup · Classical Composer World Cup', 950, 1212);
   canvas.toBlob((blob) => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `大师对位-MusiCup-${champion.nameZh}-冠军.png`;
+    link.download = language === 'zh' ? `大师对位-MusiCup-${champion.nameZh}-冠军.png` : `MusiCup-${champion.nameOriginal}-Champion.png`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -1237,14 +1314,14 @@ type StatisticsData = {
   };
   namedSaved?: boolean;
 };
-function rankingList(items: RankingItem[], total: number) {
+function rankingList(items: RankingItem[], total: number, language: Language) {
   return (
     <ol className="ranking-list">
       {items.length ? (
         items.map((item, index) => (
           <li key={item.id}>
             <b>{index + 1}</b>
-            <span>{byId.get(item.id)?.nameZh || item.id}</span>
+            <span>{composerName(byId.get(item.id), language) || item.id}</span>
             <strong>
               {item.count}
               <small>
@@ -1254,7 +1331,7 @@ function rankingList(items: RankingItem[], total: number) {
           </li>
         ))
       ) : (
-        <li className="empty-ranking">还没有完整比赛结果</li>
+        <li className="empty-ranking">{language === 'zh' ? '还没有完整比赛结果' : 'No completed results yet'}</li>
       )}
     </ol>
   );
@@ -1267,6 +1344,7 @@ function ResultStatistics({
   state: TournamentState;
   onStateChange: (state: TournamentState) => void;
 }) {
+  const { language, text } = useLanguage();
   const [data, setData] = useState<StatisticsData | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
@@ -1293,6 +1371,7 @@ function ResultStatistics({
     championId: placements.champion,
     runnerUpId: placements.runnerUp,
     semifinalistIds: placements.semifinalists,
+    language,
     ...extra,
   });
   const load = async () => {
@@ -1331,14 +1410,14 @@ function ResultStatistics({
   const saveNamed = async () => {
     const displayName = name.trim();
     if (!displayName) {
-      setMessage('请先输入昵称。');
+      setMessage(text('请先输入昵称。','Enter a nickname first.'));
       return;
     }
     if (!consent) {
-      setMessage('请先勾选自愿记名同意项。');
+      setMessage(text('请先勾选自愿记名同意项。','Please confirm the voluntary attribution consent.'));
       return;
     }
-    setMessage('正在保存…');
+    setMessage(text('正在保存…','Saving…'));
     try {
       const bracket = state.knockout!.rounds.map((round) =>
         round.matches.map(({ a, b, winner }) => ({ a, b, winner })),
@@ -1357,13 +1436,13 @@ function ResultStatistics({
         namedResultSaved: true,
         savedDisplayName: displayName,
       });
-      setMessage('昵称和本届完整签表已保存。');
+      setMessage(text('昵称和本届完整签表已保存。','Your nickname and full bracket have been saved.'));
     } catch {
-      setMessage('保存失败，请检查网络后重试；匿名统计与本地结果不受影响。');
+      setMessage(text('保存失败，请检查网络后重试；匿名统计与本地结果不受影响。','Could not save. Check your connection and retry; anonymous totals and your local result are unaffected.'));
     }
   };
   const deleteNamed = async () => {
-    if (!confirm('确认撤回昵称和完整签表吗？匿名名次仍会保留在汇总统计中。'))
+    if (!confirm(text('确认撤回昵称和完整签表吗？匿名名次仍会保留在汇总统计中。','Remove your nickname and full bracket? Anonymous placements will remain in the totals.')))
       return;
     try {
       const response = await fetch(statisticsEndpoint(), {
@@ -1382,29 +1461,29 @@ function ResultStatistics({
         namedResultSaved: false,
         savedDisplayName: '',
       });
-      setMessage('具名记录已撤回，匿名名次统计仍保留。');
+      setMessage(text('具名记录已撤回，匿名名次统计仍保留。','Named data removed; anonymous placements remain in the totals.'));
     } catch {
-      setMessage('撤回失败，请检查网络后重试。');
+      setMessage(text('撤回失败，请检查网络后重试。','Could not remove the record. Check your connection and retry.'));
     }
   };
   const savePlayerMessage = async () => {
-    const text = playerMessage.trim();
-    if (!text) {
-      setPlayerMessageStatus('请先写下想说的话。');
+    const messageBody = playerMessage.trim();
+    if (!messageBody) {
+      setPlayerMessageStatus(text('请先写下想说的话。','Write a message first.'));
       return;
     }
-    setPlayerMessageStatus('正在送出…');
+    setPlayerMessageStatus(text('正在送出…','Sending…'));
     try {
       const response = await fetch(statisticsEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload({ playerMessage: text })),
+        body: JSON.stringify(payload({ playerMessage: messageBody })),
       });
       if (!response.ok) throw new Error();
-      onStateChange({ ...state, playerMessageSaved: true, savedPlayerMessage: text });
-      setPlayerMessageStatus('留言已经送达，谢谢你的建议。');
+      onStateChange({ ...state, playerMessageSaved: true, savedPlayerMessage: messageBody });
+      setPlayerMessageStatus(text('留言已经送达，谢谢你的建议。','Message received. Thank you for the feedback.'));
     } catch {
-      setPlayerMessageStatus('留言暂时未能送出，请检查网络后重试。');
+      setPlayerMessageStatus(text('留言暂时未能送出，请检查网络后重试。','The message could not be sent. Check your connection and retry.'));
     }
   };
   const championCount =
@@ -1418,35 +1497,35 @@ function ResultStatistics({
       <header>
         <div>
           <p className="kicker">COMMUNITY RESULTS</p>
-          <h2>全站结果统计</h2>
+          <h2>{text('全站结果统计','Community results')}</h2>
         </div>
         <Button variant="outline" size="sm" onClick={load}>
           <BarChart3 />
-          刷新排行
+          {text('刷新排行','Refresh')}
         </Button>
       </header>
       {status === 'loading' ? (
         <div className="statistics-notice">
           <LoaderCircle className="spin" />
-          正在汇总所有玩家的结果…
+          {text('正在汇总所有玩家的结果…','Loading community results…')}
         </div>
       ) : status === 'error' ? (
         <div className="statistics-notice error">
-          <p>统计服务暂时无法连接，本地比赛结果不受影响。</p>
+          <p>{text('统计服务暂时无法连接，本地比赛结果不受影响。','The statistics service is unavailable. Your local result is unaffected.')}</p>
           <Button variant="outline" onClick={load}>
-            重新加载
+            {text('重新加载','Try again')}
           </Button>
         </div>
       ) : (
         <>
           <div className="personal-stats">
             <article>
-              <span>完整结果</span>
+              <span>{text('完整结果','Completed results')}</span>
               <strong>{data?.total || 0}</strong>
-              <small>份</small>
+              <small>{text('份','entries')}</small>
             </article>
             <article>
-              <span>同样选择本届冠军</span>
+              <span>{text('同样选择本届冠军','Chose the same champion')}</span>
               <strong>{championCount}</strong>
               <small>
                 {data?.total
@@ -1455,7 +1534,7 @@ function ResultStatistics({
               </small>
             </article>
             <article>
-              <span>将本届冠军选入四强</span>
+              <span>{text('将本届冠军选入四强','Put this champion in the top four')}</span>
               <strong>{topFourCount}</strong>
               <small>
                 {data?.total
@@ -1466,16 +1545,16 @@ function ResultStatistics({
           </div>
           <div className="rankings-grid">
             <section>
-              <h3>冠军排行</h3>
-              {rankingList(data?.rankings.champion || [], data?.total || 0)}
+              <h3>{text('冠军排行','Champion ranking')}</h3>
+              {rankingList(data?.rankings.champion || [], data?.total || 0, language)}
             </section>
             <section>
-              <h3>亚军排行</h3>
-              {rankingList(data?.rankings.runnerUp || [], data?.total || 0)}
+              <h3>{text('亚军排行','Runner-up ranking')}</h3>
+              {rankingList(data?.rankings.runnerUp || [], data?.total || 0, language)}
             </section>
             <section>
-              <h3>四强排行</h3>
-              {rankingList(data?.rankings.topFour || [], data?.total || 0)}
+              <h3>{text('四强排行','Semifinalist ranking')}</h3>
+              {rankingList(data?.rankings.topFour || [], data?.total || 0, language)}
             </section>
           </div>
         </>
@@ -1484,31 +1563,31 @@ function ResultStatistics({
         <div className="named-copy">
           <ShieldCheck />
           <div>
-            <h3>自愿记名</h3>
+            <h3>{text('自愿记名','Optional attribution')}</h3>
             <p>
-              匿名冠军、亚军和四强会自动进入汇总。只有主动填写昵称并勾选同意后，才保存昵称与完整签表；不收集联系方式，具名资料最多保留一年。
+              {text('匿名冠军、亚军和四强会自动进入汇总。只有主动填写昵称并勾选同意后，才保存昵称与完整签表；不收集联系方式，具名资料最多保留一年。','Champion, runner-up, and semifinalists enter anonymous totals. A nickname and full bracket are stored only with your explicit consent, for no more than one year.')}
             </p>
           </div>
         </div>
         {state.namedResultSaved ? (
           <div className="named-saved">
             <span>
-              已以“<b>{state.savedDisplayName}</b>”记名
+              {text('已以','Saved as')} “<b>{state.savedDisplayName}</b>”
             </span>
             <Button variant="outline" onClick={deleteNamed}>
               <Trash2 />
-              撤回记名
+              {text('撤回记名','Remove attribution')}
             </Button>
           </div>
         ) : (
           <div className="named-form">
             <label>
-              昵称
+              {text('昵称','Nickname')}
               <input
                 value={name}
                 maxLength={30}
                 onChange={(event) => setName(event.target.value)}
-                placeholder="请勿填写真实姓名、电话等信息"
+                placeholder={text('请勿填写真实姓名、电话等信息','Do not enter your real name, phone number, or contact details')}
               />
             </label>
             <label className="consent">
@@ -1517,10 +1596,10 @@ function ResultStatistics({
                 checked={consent}
                 onChange={(event) => setConsent(event.target.checked)}
               />
-              <span>我自愿提交昵称，并同意保存本届完整签表用于活动统计。</span>
+              <span>{text('我自愿提交昵称，并同意保存本届完整签表用于活动统计。','I voluntarily submit this nickname and consent to storing my full bracket for event statistics.')}</span>
             </label>
             <Button className="primary-action" onClick={saveNamed}>
-              保存具名结果
+              {text('保存具名结果','Save named result')}
             </Button>
           </div>
         )}
@@ -1530,9 +1609,9 @@ function ResultStatistics({
           </p>
         )}
         <details>
-          <summary>数据与隐私说明</summary>
+          <summary>{text('数据与隐私说明','Data and privacy')}</summary>
           <p>
-            匿名统计只保存随机结果编号和冠军、亚军、四强；昵称不会出现在公开排行榜中。撤回记名后会删除昵称与完整签表，但匿名名次继续用于汇总，避免排行榜计数失真。
+            {text('匿名统计只保存随机结果编号和冠军、亚军、四强；昵称不会出现在公开排行榜中。撤回记名后会删除昵称与完整签表，但匿名名次继续用于汇总，避免排行榜计数失真。','Anonymous totals store only a random result ID and the top four. Nicknames never appear publicly. Removing attribution deletes the nickname and full bracket while retaining anonymous placements for accurate totals.')}
           </p>
         </details>
       </section>
@@ -1540,12 +1619,12 @@ function ResultStatistics({
         <div className="named-copy">
           <Music2 />
           <div>
-            <h3>留下一句话</h3>
-            <p>你的冠军是谁？还希望加入哪些作曲家、曲目或玩法？留言只在管理员后台显示，不会自动公开。</p>
+            <h3>{text('留下一句话','Leave a message')}</h3>
+            <p>{text('你的冠军是谁？还希望加入哪些作曲家、曲目或玩法？留言只在管理员后台显示，不会自动公开。','Tell us about your champion, missing composers, works, or ideas. Messages are visible only to the administrator and are not published automatically.')}</p>
           </div>
         </div>
-        <textarea value={playerMessage} maxLength={300} onChange={(event) => setPlayerMessage(event.target.value)} placeholder="写下你的感受或建议（最多300字，请勿填写电话、邮箱等个人信息）" />
-        <div className="player-message-actions"><small>{playerMessage.length}/300 · 可以匿名留言</small><Button className="primary-action" onClick={savePlayerMessage}>{state.playerMessageSaved ? '更新留言' : '送出留言'}</Button></div>
+        <textarea value={playerMessage} maxLength={300} onChange={(event) => setPlayerMessage(event.target.value)} placeholder={text('写下你的感受或建议（最多300字，请勿填写电话、邮箱等个人信息）','Feedback or suggestions (300 characters maximum; do not include contact or sensitive information)')} />
+        <div className="player-message-actions"><small>{playerMessage.length}/300 · {text('可以匿名留言','anonymous messages welcome')}</small><Button className="primary-action" onClick={savePlayerMessage}>{state.playerMessageSaved ? text('更新留言','Update message') : text('送出留言','Send message')}</Button></div>
         {playerMessageStatus && <p className="named-message" role="status">{playerMessageStatus}</p>}
       </section>
     </section>
@@ -1563,6 +1642,7 @@ function FinalResultView({
   onReset: () => void;
   onDownload: () => void;
 }) {
+  const { language, text } = useLanguage();
   const rounds = state.knockout!.rounds;
   const final = rounds.at(-1)!.matches[0];
   const champion = byId.get(state.champion!)!;
@@ -1581,26 +1661,26 @@ function FinalResultView({
           <ComposerPortrait composer={champion} />
         </div>
         <p className="kicker">大师对位 · MusiCup · CHAMPION</p>
-        <h1>{champion.nameZh}</h1>
-        <p className="champion-original">{champion.nameOriginal}</p>
-        <p>{champion.bio}</p>
+        <h1>{composerName(champion, language)}</h1>
+        <p className="champion-original">{language === 'zh' ? champion.nameOriginal : champion.nameZh}</p>
+        <p>{composerBio(champion, language)}</p>
       </div>
       <div className="podium">
         <article className="podium-champion">
           <Crown />
-          <small>冠军</small>
-          <strong>{champion.nameZh}</strong>
+          <small>{text('冠军','Champion')}</small>
+          <strong>{composerName(champion, language)}</strong>
         </article>
         <article>
           <Medal />
-          <small>亚军</small>
-          <strong>{runnerUp.nameZh}</strong>
+          <small>{text('亚军','Runner-up')}</small>
+          <strong>{composerName(runnerUp, language)}</strong>
         </article>
         {semifinal.map((composer) => (
           <article key={composer.id}>
             <Sparkles />
-            <small>四强</small>
-            <strong>{composer.nameZh}</strong>
+            <small>{text('四强','Semifinalist')}</small>
+            <strong>{composerName(composer, language)}</strong>
           </article>
         ))}
       </div>
@@ -1608,9 +1688,9 @@ function FinalResultView({
         <div className="bracket-title">
           <div>
             <p className="kicker">FULL BRACKET</p>
-            <h2>淘汰赛完整对阵</h2>
+            <h2>{text('淘汰赛完整对阵','Complete knockout bracket')}</h2>
           </div>
-          <span>左右滑动查看完整签表</span>
+          <span>{text('左右滑动查看完整签表','Swipe sideways to see the full bracket')}</span>
         </div>
         <ResultBracket state={state} />
       </section>
@@ -1618,11 +1698,11 @@ function FinalResultView({
       <div className="result-actions">
         <Button className="primary-action" onClick={onDownload}>
           <Download />
-          下载结果图片
+          {text('下载结果图片','Download result image')}
         </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw />
-          重新开始一届比赛
+          {text('重新开始一届比赛','Start a new tournament')}
         </Button>
       </div>
     </section>
@@ -1630,8 +1710,10 @@ function FinalResultView({
 }
 
 export default function Home() {
+  const { language, text } = useLanguage();
   const [state, setState] = useState<TournamentState | null>(null);
   const [showOpening, setShowOpening] = useState(true);
+  const [showLegal, setShowLegal] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [audio, setAudio] = useState<AudioState>({
     active: null,
@@ -1649,8 +1731,9 @@ export default function Home() {
       );
       setState(saved || createTournament());
       setShowOpening(!saved || saved.phase === 'roster');
-      const cached = JSON.parse(localStorage.getItem(AUDIO_CACHE_KEY) || '{}');
-      setAudio((value) => ({ ...value, sources: cached }));
+      const cached = JSON.parse(localStorage.getItem(AUDIO_CACHE_KEY) || '{}') as Record<string, TrackSource>;
+      const openlyLicensed = Object.fromEntries(Object.entries(cached).filter(([, source]) => source.provider === 'Wikimedia Commons'));
+      setAudio((value) => ({ ...value, sources: openlyLicensed }));
     } catch {
       setState(createTournament());
     }
@@ -1663,8 +1746,8 @@ export default function Home() {
     if (state) localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
   useEffect(() => {
-    if (Object.keys(audio.sources).length)
-      localStorage.setItem(AUDIO_CACHE_KEY, JSON.stringify(audio.sources));
+    const openlyLicensed = Object.fromEntries(Object.entries(audio.sources).filter(([, source]) => source.provider === 'Wikimedia Commons'));
+    localStorage.setItem(AUDIO_CACHE_KEY, JSON.stringify(openlyLicensed));
   }, [audio.sources]);
   useEffect(() => {
     if (state?.phase === 'group-selection')
@@ -1777,7 +1860,7 @@ export default function Home() {
             active: null,
             loading: null,
             error: trackId,
-            errorDetail: '当前地区或音频地址不可用，已清除缓存',
+            errorDetail: text('当前地区或音频地址不可用，已清除缓存','This preview is unavailable in your region or its media address has changed.'),
             progress: 0,
           };
         });
@@ -1806,12 +1889,12 @@ export default function Home() {
       stopAudio();
       const detail =
         error instanceof DOMException && error.name === 'NotAllowedError'
-          ? '浏览器阻止播放，请再次点击播放'
+          ? text('浏览器阻止播放，请再次点击播放','Your browser blocked playback. Tap play again.')
           : error instanceof Error && error.message === 'NETWORK'
-            ? '网络无法连接试听目录'
+            ? text('网络无法连接试听目录','The preview catalogue could not be reached.')
             : error instanceof Error && error.message === 'NO_MATCH'
-              ? '未找到与该作品相符的试听'
-              : '当前地区或音频地址不可用';
+              ? text('未找到与该作品相符的试听','No reliably matching preview was found.')
+              : text('当前地区或音频地址不可用','This preview is unavailable in your region or its address has changed.');
       setAudio((value) => ({
         ...value,
         active: null,
@@ -1958,34 +2041,34 @@ export default function Home() {
     return (
       <main className="loading-screen">
         <LoaderCircle className="spin" />
-        <span>正在准备48人名单…</span>
+        <span>{text('正在准备48人名单…','Preparing the field of 48…')}</span>
       </main>
     );
   if (showOpening)
     return <OpeningCover onStart={() => setShowOpening(false)} />;
   const stageText =
     state.phase === 'roster'
-      ? '选择48位参赛者'
+      ? text('选择48位参赛者','Choose 48 composers')
       : state.phase === 'draw'
-        ? '等待抽签'
+        ? text('等待抽签','Awaiting the draw')
         : state.phase === 'group-selection'
-          ? `${groupTitle(state.activeGroup)} · 已完成${state.groupPicks.length}/12组`
+          ? `${groupTitle(state.activeGroup, language)} · ${text('已完成','completed')} ${state.groupPicks.length}/12`
           : state.phase === 'repechage'
-            ? '复活赛 · 选择8人'
+            ? text('复活赛 · 选择8人','Repechage · Choose 8')
             : state.phase === 'finished'
-              ? '32强待抽签'
+              ? text('32强待抽签','Round of 32 draw')
               : state.phase === 'knockout' && state.knockout
-                ? `${roundLabel(state.knockout.rounds[state.knockout.currentRound].entrants.length)} · 第${state.knockout.currentMatch + 1}场`
+                ? `${roundName(state.knockout.rounds[state.knockout.currentRound].entrants.length, language)} · ${text('第','Match ')}${state.knockout.currentMatch + 1}`
                 : state.phase === 'round-transition'
-                  ? '本轮完成'
-                  : '冠军已经产生';
+                  ? text('本轮完成','Round complete')
+                  : text('冠军已经产生','Champion crowned');
   return (
     <main className="site-shell">
       <header className="topbar">
         <a className="brand" href="#top">
           <img
             className="brand-note"
-            src="https://vulpexy.github.io/composer-world-cup/musicup-note-icon.png"
+            src="./musicup-note-icon.png"
             alt=""
           />
           <span className="brand-wordmark" aria-label="MusiCup 大师对位">
@@ -2001,15 +2084,16 @@ export default function Home() {
             <b style={{ width: `${progress}%` }} />
           </i>
         </div>
+        <LanguageSwitch compact />
         {state.phase !== 'roster' && state.phase !== 'result' ? (
           <Button variant="ghost" size="sm" onClick={reset}>
             <RotateCcw />
-            重新开始
+            {text('重新开始','Restart')}
           </Button>
         ) : (
           <span />
         )}
-        <div className="brand-event-title">古典作曲家世界杯</div>
+        <div className="brand-event-title">{text('古典作曲家世界杯','Classical Composer World Cup')}</div>
       </header>
       <div id="top">
         {state.phase === 'roster' && (
@@ -2073,18 +2157,21 @@ export default function Home() {
             state={state}
             onStateChange={setState}
             onReset={reset}
-            onDownload={() => downloadResultImage(state)}
+            onDownload={() => downloadResultImage(state, language)}
           />
         )}
       </div>
       <footer>
         <span className="footer-music">
           <Music2 />
-          肖像来自 Wikipedia · 试听由 Wikimedia Commons 与 iTunes 提供
+          {text('肖像来自 Wikipedia / Wikimedia Commons · 试听优先使用开放录音，部分商店试听由 iTunes 提供','Portraits: Wikipedia / Wikimedia Commons · Open recordings preferred; some store previews provided courtesy of iTunes')}
         </span>
-        <span>61人候选池 · 自选48人 · 十二音级12组 · 8人复活 · 32强淘汰赛</span>
+        <button type="button" className="legal-link" onClick={() => setShowLegal(true)}>{text('素材、版权与隐私说明','Credits, rights & privacy')}</button>
+        <span>{text('61人候选池 · 自选48人 · 十二音级12组 · 8人复活 · 32强淘汰赛','61 candidates · Choose 48 · 12 pitch groups · Revive 8 · Round of 32')}</span>
       </footer>
+      {showLegal && <LegalNotice onClose={() => setShowLegal(false)} />}
     </main>
   );
 }
+
 

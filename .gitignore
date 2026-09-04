@@ -1,0 +1,6 @@
+node_modules/
+.npm-cache/
+export-static/dist/
+tsconfig.tsbuildinfo
+.next/
+

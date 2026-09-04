@@ -419,7 +419,7 @@ function WorkList({
                   onClick={() => onToggle(composer, work, index)}
                 >
                   <strong>{language === 'zh' ? work.nameZh : work.nameEn}</strong>
-                  <small>{language === 'zh' ? work.nameEn : work.nameZh}</small>
+                  {language === 'zh' && <small>{work.nameEn}</small>}
                 </button>
                 {failed && <div className="audio-error-row"><em>{audio.errorDetail || text('暂未匹配到可用试听，可稍后重试','No suitable preview was found. Please try again later.')}</em><details className="audio-help"><summary aria-label={text('了解试听失败原因','Why did this preview fail?')}><Info /></summary><div><b>{text('为什么会失败？','Why can this happen?')}</b><p>{text('第三方目录可能因地区授权、网络连接、浏览器播放限制、录音地址更新或曲目无法可靠匹配而不可用。你可以重试，或打开来源页面继续试听。','Third-party catalogues may be unavailable because of territorial rights, connectivity, browser playback rules, a changed media URL, or an uncertain track match. Retry or open the source page when available.')}</p></div></details></div>}
                 {source && (
@@ -518,7 +518,7 @@ function ComposerCard({
             <h2 className={composerName(composer, language).length > 24 ? 'long-name' : ''}>
               {composerName(composer, language)}
             </h2>
-            <p className="original-name">{language === 'zh' ? composer.nameOriginal : composer.nameZh}</p>
+            {language === 'zh' && <p className="original-name">{composer.nameOriginal}</p>}
             <p className="mobile-region">
               {composerYears(composer, language)} · {composerRegion(composer, language)}
             </p>
@@ -540,7 +540,7 @@ function ComposerCard({
             <h2 className={composerName(composer, language).length > 24 ? 'long-name' : ''}>
               {composerName(composer, language)}
             </h2>
-            <small>{language === 'zh' ? composer.nameOriginal : composer.nameZh}</small>
+            {language === 'zh' && <small>{composer.nameOriginal}</small>}
           </header>
           <WorkList
             composer={composer}
@@ -643,7 +643,7 @@ function RosterView({ onStart }: { onStart: (ids: string[]) => void }) {
                 {index >= 48 ? text('扩展候选','Additional candidate') : text('默认选手','Default player')} · {composerPeriod(composer, language)}
               </p>
               <h2>{composerName(composer, language)}</h2>
-              <small>{language === 'zh' ? composer.nameOriginal : composer.nameZh}</small>
+              {language === 'zh' && <small>{composer.nameOriginal}</small>}
               <em>{composerRegion(composer, language)}</em>
             </div>
           </article>
@@ -1662,7 +1662,7 @@ function FinalResultView({
         </div>
         <p className="kicker">大师对位 · MusiCup · CHAMPION</p>
         <h1>{composerName(champion, language)}</h1>
-        <p className="champion-original">{language === 'zh' ? champion.nameOriginal : champion.nameZh}</p>
+        {language === 'zh' && <p className="champion-original">{champion.nameOriginal}</p>}
         <p>{composerBio(champion, language)}</p>
       </div>
       <div className="podium">
@@ -2084,15 +2084,15 @@ export default function Home() {
             <b style={{ width: `${progress}%` }} />
           </i>
         </div>
-        <LanguageSwitch compact />
-        {state.phase !== 'roster' && state.phase !== 'result' ? (
-          <Button variant="ghost" size="sm" onClick={reset}>
-            <RotateCcw />
-            {text('重新开始','Restart')}
-          </Button>
-        ) : (
-          <span />
-        )}
+        <div className="topbar-actions">
+          <LanguageSwitch compact />
+          {state.phase !== 'roster' && state.phase !== 'result' ? (
+            <Button variant="ghost" size="sm" onClick={reset}>
+              <RotateCcw />
+              {text('重新开始','Restart')}
+            </Button>
+          ) : null}
+        </div>
         <div className="brand-event-title">{text('古典作曲家世界杯','Classical Composer World Cup')}</div>
       </header>
       <div id="top">

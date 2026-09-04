@@ -8,8 +8,6 @@
 
 [Play in English](https://vulpexy.github.io/composer-world-cup/?lang=en)
 
-[International sharing and operations guide](./INTERNATIONAL-LAUNCH.md)
-
 页面右上角可以随时切换中文与 English，语言选择会保存在浏览器中；两种语言共用同一比赛和匿名统计池。
 
 ## 比赛流程

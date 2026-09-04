@@ -6,6 +6,12 @@
 
 [开始“大师对位 · MusiCup”](https://vulpexy.github.io/composer-world-cup/)
 
+[Play in English](https://vulpexy.github.io/composer-world-cup/?lang=en)
+
+[International sharing and operations guide](./INTERNATIONAL-LAUNCH.md)
+
+页面右上角可以随时切换中文与 English，语言选择会保存在浏览器中；两种语言共用同一比赛和匿名统计池。
+
 ## 比赛流程
 
 1. **选择参赛名单**：从 61 位候选作曲家中选出 48 位。玩家可以直接使用默认名单，也可以取消默认选手、加入扩展候选，组成自己的 48 人阵容。
@@ -42,13 +48,27 @@ npm run dev
 
 ## 数据与音频
 
-作曲家资料主要依据公开百科资料整理。肖像主要来自 Wikimedia Commons，试听片段通过公开音乐目录的在线接口匹配。第三方资源的可用性可能受到地区、曲目版本和版权状态影响。
+作曲家资料主要依据公开百科资料重新概述。肖像来自 Wikipedia / Wikimedia Commons；每张肖像旁的来源按钮可前往对应页面核验作者、版权状态和许可条件。
+
+网站优先匹配 Wikimedia Commons 中明确标记为公有领域、CC0、CC BY、CC BY-SA 或 EFF Open Audio License 的录音，并在曲目旁显示表演者与许可。部分尚无合适开放录音的曲目使用 Apple Music / iTunes 商店试听：只进行在线流式播放，不把音频文件存入仓库或提供下载；曲目旁保留对应商店链接，并标注“Provided courtesy of iTunes”。第三方内容可能因地区、目录或授权变化而不可用。
+
+古典作品的乐谱进入公有领域，不代表现代演奏录音也自动进入公有领域。素材权利仍归原作者、表演者、录音制作者或相应权利人所有。发现曲目匹配、署名或授权问题时，请通过 [GitHub Issues](https://github.com/Vulpexy/composer-world-cup/issues) 联系维护者，以便核验、更正或移除。
 
 ## 隐私
 
 比赛进度保存在玩家自己的浏览器中，不建立用户账户。完成一届比赛后，系统会上传一个随机结果编号以及冠军、亚军和四强，用于匿名汇总统计；不上传浏览器中途选择、联系方式或真实身份。
 
-昵称与完整淘汰赛签表只会在玩家主动填写昵称并勾选同意后保存。昵称不会出现在公开排行榜中，具名资料最多保留一年；玩家可以在结果页撤回昵称和完整签表，匿名名次仍保留在汇总中以维持统计准确性。请勿在昵称中填写真实姓名、电话、邮箱等个人信息。
+昵称与完整淘汰赛签表只会在玩家主动填写昵称并勾选同意后保存。昵称不会出现在公开排行榜中，具名资料最多保留一年；玩家可以在结果页撤回昵称和完整签表，匿名名次仍保留在汇总中以维持统计准确性。留言仅供管理员阅读。请勿在昵称或留言中填写真实姓名、电话、邮箱等个人信息。托管服务可能为安全和运行需要生成常规访问日志。
+
+## 独立项目声明
+
+MusiCup 是免费、非商业的音乐鉴赏互动项目，与 FIFA、Apple、Wikimedia、作曲家遗产管理机构、表演者或唱片公司不存在隶属、授权、赞助或背书关系。“世界杯”仅用于描述淘汰赛结构。Apple Music / iTunes 商店试听的使用仍受 Apple 相关条款约束；Wikimedia Commons 素材的使用以各文件页面列明的许可为准。
+
+## English summary
+
+MusiCup is a free, non-commercial Classical Composer World Cup. Choose 48 from 61 composers, compare four at a time in twelve pitch-named groups, revive eight eliminated favourites, then play through a fixed Round-of-32 bracket. The interface, composer cards, audio errors, results, privacy notice, and downloadable bracket are available in English through `?lang=en`.
+
+The project prioritises public-domain and openly licensed Wikimedia Commons recordings with visible attribution. Some works currently use streamed Apple Music / iTunes store previews, marked “Provided courtesy of iTunes” and linked to their store pages. No preview audio files are distributed from this repository. MusiCup is independent and is not affiliated with or endorsed by FIFA, Apple, Wikimedia, performers, labels, or composer estates.
 
 ## 管理员数据页
 
@@ -70,4 +90,5 @@ npm run dev
 - [中国古代诗人世界杯（poet-world-cup）](https://github.com/lufeng2985/poet-world-cup)
 
 感谢原项目作者公开项目文件与设计思路，为本项目的分组、对战、晋级和结果展示提供了重要参考。
+
 

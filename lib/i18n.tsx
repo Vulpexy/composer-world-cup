@@ -63,6 +63,11 @@ const regionMap: Record<string, string> = {
   '意大利／西班牙': 'Italy / Spain', '德意志／英国': 'Germany / Britain',
   '德意志／奥地利': 'Germany / Austria', '德国／法国': 'Germany / France',
   '波兰／法国': 'Poland / France', '俄罗斯／美国': 'Russia / United States',
+  '奥地利／波希米亚': 'Austria / Bohemia', '奥地利／美国': 'Austria / United States',
+  '比利时／法国': 'Belgium / France', '捷克／波希米亚': 'Czech lands / Bohemia',
+  '俄罗斯／法国／美国': 'Russia / France / United States',
+  '俄罗斯／苏联': 'Russia / Soviet Union', '苏联／俄罗斯': 'Soviet Union / Russia',
+  '匈牙利／美国': 'Hungary / United States',
   '匈牙利／德语文化圈': 'Hungary / German-speaking Europe',
   '德意志／奥地利／法国': 'Germany / Austria / France',
   '法兰德斯乐派／法国—低地国家': 'Franco-Flemish / France–Low Countries',
@@ -94,5 +99,4 @@ export const composerBio = (composer: Composer, language: Language) => {
 
 export const composerYears = (composer: Composer, language: Language) =>
   language === 'zh' ? composer.years : composer.years.replace(/^约/, 'c. ');
-
 
